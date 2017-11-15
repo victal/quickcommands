@@ -1,0 +1,21 @@
+* {
+    box-sizing: border-box;
+}
+
+form, input {
+    width: 100%;
+}
+
+#search {
+    border: none;
+    border-bottom: 1px solid #222222;
+}
+
+ul {
+    list-style: none;
+}
+
+li.selected {
+    color: white;
+    background-color: #222222;
+}
