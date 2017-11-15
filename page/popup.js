@@ -13,7 +13,7 @@ function closeUp() {
 
 function updateTabs(filterText) {
     let tabList = document.getElementById("tabs");
-    let filterRegex = new RegExp(".*" + filterText + ".*", "i")
+    let filterRegex = new RegExp(".*" + filterText + ".*", "i");
     browser.tabs.query({
         currentWindow: false
     }).then((tabs) => {
@@ -47,14 +47,38 @@ function getSelectedTabID() {
     return parseInt(listEntry.getAttribute("data-tab-id"));
 }
 
+function selectNextElement() {
+    let selectedEntry = document.querySelector("#tabs>.selected");
+    let nextElement = document.getElementById("tabs").querySelector(".selected + li");
+    if (nextElement) {
+        selectedEntry.classList.remove("selected");
+        nextElement.classList.add("selected");
+    }
+}
+
+function selectPreviousElement() {
+    let tabList = document.getElementById("tabs");
+    let selectedEntry = tabList.querySelector(".selected");
+    let children = tabList.childNodes;
+    for (let i = 1; i < children.length; i++) {
+        if (children.item(i) === selectedEntry) {
+            selectedEntry.classList.remove("selected");
+            children.item(i - 1).classList.add("selected");
+            return;
+        }
+    }
+}
+
 function setupInputFilter() {
     let searchInput = document.getElementById("search");
     searchInput.addEventListener("keyup", (event) => {
         switch (event.key) {
             case "ArrowDown":
-                break; //TODO: Change selected tab
+                selectNextElement();
+                break;
             case "ArrowUp":
-                break; //TODO: Change selected tab
+                selectPreviousElement();
+                break;
             case "Enter":
                 switchToTab(getSelectedTabID());
                 break;
