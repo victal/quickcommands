@@ -42,6 +42,34 @@ function updateTabs(filterText) {
     });
 }
 
+function openTab(url) {
+    browser.tabs.create({url: url});
+}
+
+function updateHistoryTabs(filterText){
+    filterText = filterText ? filterText : "";
+    let itemList = document.getElementById("history");
+    browser.history.search({
+        text: filterText,
+        maxResults: 20
+    }).then((items)=> {
+        while(itemList.lastChild){
+            itemList.removeChild(itemList.lastChild);
+        }
+        let currentItems = document.createDocumentFragment();
+        for (let item of items) {
+            let itemElement = document.createElement("li");
+            itemElement.setAttribute("data-item-url", item.url);
+            itemElement.addEventListener("click", () => {
+                openTab(item.url);
+            });
+            itemElement.textContent = item.title;
+            currentItems.appendChild(itemElement)
+        }
+        itemList.appendChild(currentItems);
+    })
+}
+
 function getSelectedTabID() {
     let listEntry = document.querySelector("#tabs>.selected");
     return parseInt(listEntry.getAttribute("data-tab-id"));
@@ -71,13 +99,16 @@ function selectPreviousElement() {
 
 function setupInputFilter() {
     let searchInput = document.getElementById("search");
-    searchInput.addEventListener("keyup", (event) => {
+    //Use keydown instead of keyup to prevent the cursor from moving
+    searchInput.addEventListener("keydown", (event) => {
         switch (event.key) {
             case "ArrowDown":
                 selectNextElement();
+                event.preventDefault();
                 break;
             case "ArrowUp":
                 selectPreviousElement();
+                event.preventDefault();
                 break;
             case "Enter":
                 switchToTab(getSelectedTabID());
@@ -90,7 +121,8 @@ function setupInputFilter() {
                 closeUp();
                 break;
             default:
-                updateTabs(searchInput.value)
+                updateTabs(searchInput.value);
+                updateHistoryTabs(searchInput.value);
         }
     });
     searchInput.focus();
@@ -98,7 +130,8 @@ function setupInputFilter() {
 
 function startUp() {
     setupInputFilter();
-    updateTabs()
+    updateTabs();
+    updateHistoryTabs();
 }
 
 document.addEventListener("DOMContentLoaded", startUp);
