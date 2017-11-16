@@ -5,11 +5,8 @@ function openPopup() {
         "url": url,
         width: 600,
         height: 500
-    }).then(() => {
-        browser.history.deleteUrl({url: url}).then(() => {console.debug("Extension page removed from history")});
-    }).catch((e) => {
-        throw e
     });
+    //Deletion from history is done on the page Javascript to ensure loading from history doesn't include it
 }
 
 

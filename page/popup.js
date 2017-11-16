@@ -46,25 +46,29 @@ function openTab(url) {
     browser.tabs.create({url: url});
 }
 
-function updateHistoryTabs(filterText){
+function updateHistoryTabs(filterText) {
     filterText = filterText ? filterText : "";
     let itemList = document.getElementById("history");
     browser.history.search({
         text: filterText,
         maxResults: 20
-    }).then((items)=> {
-        while(itemList.lastChild){
+    }).then((items) => {
+        let usedUrls = [];
+        while (itemList.lastChild) {
             itemList.removeChild(itemList.lastChild);
         }
         let currentItems = document.createDocumentFragment();
         for (let item of items) {
-            let itemElement = document.createElement("li");
-            itemElement.setAttribute("data-item-url", item.url);
-            itemElement.addEventListener("click", () => {
-                openTab(item.url);
-            });
-            itemElement.textContent = item.title;
-            currentItems.appendChild(itemElement)
+            if (usedUrls.indexOf(item.url) === -1) {
+                let itemElement = document.createElement("li");
+                itemElement.setAttribute("data-item-url", item.url);
+                itemElement.addEventListener("click", () => {
+                    openTab(item.url);
+                });
+                itemElement.textContent = item.title;
+                currentItems.appendChild(itemElement);
+                usedUrls.concat(item.url);
+            }
         }
         itemList.appendChild(currentItems);
     })
@@ -129,9 +133,14 @@ function setupInputFilter() {
 }
 
 function startUp() {
-    setupInputFilter();
-    updateTabs();
-    updateHistoryTabs();
+    let url = browser.extension.getURL("page/popup.html");
+    browser.history.deleteUrl({url: url}).then(() => {
+        console.debug("Extension page removed from history")
+        setupInputFilter();
+        updateTabs();
+        updateHistoryTabs();
+    });
+
 }
 
 document.addEventListener("DOMContentLoaded", startUp);
