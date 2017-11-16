@@ -43,7 +43,14 @@ function updateTabs(filterText) {
 }
 
 function openTab(url) {
-    browser.tabs.create({url: url});
+    getFirstWindow().then((w) => {
+        browser.tabs.create({url: url, windowId:w.id }).then(() => {
+            browser.windows.update(w.id, {focused: true});
+            closeUp();
+        });
+
+    });
+
 }
 
 function updateHistoryTabs(filterText) {
@@ -130,6 +137,16 @@ function setupInputFilter() {
         }
     });
     searchInput.focus();
+}
+
+function getFirstWindow() {
+    return browser.windows.getAll().then((windows) => {
+        return browser.windows.get(Math.min.apply(Math, windows.filter((w) => {
+            return w.type === 'normal';
+        }).map((w) => {
+            return w.id;
+        })));
+    });
 }
 
 function startUp() {
