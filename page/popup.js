@@ -12,7 +12,7 @@ function closeUp() {
 }
 
 function updateTabs(filterText) {
-    let tabList = document.getElementById("tabs");
+    let tabList = document.getElementById("tabList");
     let filterRegex = new RegExp(".*" + filterText + ".*", "i");
     browser.tabs.query({
         currentWindow: false
@@ -55,7 +55,7 @@ function openTab(url) {
 
 function updateHistoryTabs(filterText) {
     filterText = filterText ? filterText : "";
-    let itemList = document.getElementById("history");
+    let itemList = document.getElementById("historyList");
     browser.history.search({
         text: filterText,
         maxResults: 20
@@ -88,7 +88,7 @@ function getSelectedTabID() {
 
 function selectNextElement() {
     let selectedEntry = document.querySelector("#tabs>.selected");
-    let nextElement = document.getElementById("tabs").querySelector(".selected + li");
+    let nextElement = document.getElementById("tabList").querySelector(".selected + li");
     if (nextElement) {
         selectedEntry.classList.remove("selected");
         nextElement.classList.add("selected");
@@ -96,7 +96,7 @@ function selectNextElement() {
 }
 
 function selectPreviousElement() {
-    let tabList = document.getElementById("tabs");
+    let tabList = document.getElementById("tabList");
     let selectedEntry = tabList.querySelector(".selected");
     let children = tabList.childNodes;
     for (let i = 1; i < children.length; i++) {
@@ -140,6 +140,7 @@ function setupInputFilter() {
 }
 
 function getFirstWindow() {
+    //TODO: Create if there is none
     return browser.windows.getAll().then((windows) => {
         return browser.windows.get(Math.min.apply(Math, windows.filter((w) => {
             return w.type === 'normal';
