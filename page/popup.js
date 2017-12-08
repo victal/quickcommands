@@ -12,6 +12,7 @@ function closeUp() {
 }
 
 function updateTabs(filterText) {
+    console.debug("Searchng for '" + filterText + "'");
     let tabList = document.getElementById("tabList");
     let filterRegex = new RegExp(".*" + filterText + ".*", "i");
     browser.tabs.query({
@@ -87,7 +88,7 @@ function getSelectedTabID() {
 }
 
 function selectNextElement() {
-    let selectedEntry = document.querySelector("#tabs>.selected");
+    let selectedEntry = document.querySelector("#tabList>.selected");
     let nextElement = document.getElementById("tabList").querySelector(".selected + li");
     if (nextElement) {
         selectedEntry.classList.remove("selected");
@@ -132,8 +133,25 @@ function setupInputFilter() {
                 closeUp();
                 break;
             default:
+                console.debug(event.key);
+                break;
+
+        }
+    });
+    searchInput.addEventListener("keyup", (event) => {
+        switch (event.key) {
+            case "ArrowDown":
+            case "ArrowUp":
+            case "Enter":
+            case "ArrowLeft":
+            case "ArrowRight":
+            case "Escape":
+                // ignored
+                break;
+            default:
                 updateTabs(searchInput.value);
                 updateHistoryTabs(searchInput.value);
+                break;
         }
     });
     searchInput.focus();
@@ -153,7 +171,7 @@ function getFirstWindow() {
 function startUp() {
     let url = browser.extension.getURL("page/popup.html");
     browser.history.deleteUrl({url: url}).then(() => {
-        console.debug("Extension page removed from history")
+        console.debug("Extension page removed from history");
         setupInputFilter();
         updateTabs();
         updateHistoryTabs();
