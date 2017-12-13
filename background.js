@@ -1,9 +1,9 @@
 function openPopup() {
     let url = browser.extension.getURL("page/popup.html");
     browser.windows.create({
-        "type": "detached_panel",
+       "type": "detached_panel",
         "url": url,
-        width: 600,
+        width: 599,
         height: 500
     });
     //Deletion from history is done on the page Javascript to ensure loading from history doesn't include it

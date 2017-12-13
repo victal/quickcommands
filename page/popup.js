@@ -12,34 +12,21 @@ function closeUp() {
 }
 
 function updateTabs(filterText) {
-    console.debug("Searchng for '" + filterText + "'");
-    let tabList = document.getElementById("tabList");
     let filterRegex = new RegExp(".*" + filterText + ".*", "i");
-    browser.tabs.query({
+    return browser.tabs.query({
         currentWindow: false
     }).then((tabs) => {
-        while (tabList.lastChild) {
-            tabList.removeChild(tabList.lastChild)
-        }
-        let currentTabs = document.createDocumentFragment();
+        let currentTabs = [];
         for (let tab of tabs) {
             if (filterText) {
                 if (!(filterRegex.test(tab.title) || filterRegex.test(tab.url))) {
                     continue
                 }
             }
-            let tabElement = document.createElement("li");
-            tabElement.setAttribute("data-tab-id", tab.id);
-            tabElement.addEventListener("click", () => {
-                switchToTab(tab.id);
-            });
-            tabElement.textContent = tab.title;
-            currentTabs.appendChild(tabElement)
+            let tabElement = new Tab(tab.id, tab.title);
+            currentTabs.push(tabElement);
         }
-        tabList.appendChild(currentTabs);
-        if (tabList.firstElementChild) {
-            tabList.firstElementChild.classList.add("selected");
-        }
+        return currentTabs;
     });
 }
 
@@ -168,12 +155,46 @@ function getFirstWindow() {
     });
 }
 
+function reRender(tabList, historyList){
+    let entryList = document.getElementById("entryList");
+    let currentItems = document.createDocumentFragment();
+    let tabSeparator = document.createElement("li");
+    tabSeparator.textContent = "Tab";
+    tabSeparator.classList.add("separator");
+    currentItems.appendChild(tabSeparator);
+    for (let tab of tabList) {
+        currentItems.appendChild(tab.render());
+    }
+    tabSeparator = document.createElement("li");
+    tabSeparator.textContent = "History";
+    tabSeparator.classList.add("separator");
+    currentItems.appendChild(tabSeparator);
+    for (let tab of historyList) {
+        currentItems.appendChild(tab.render());
+    }
+    entryList.appendChild(currentItems);
+    if(tabList){
+        tabList[0].select();
+    }
+}
+
 function startUp() {
+    // Fix for Fx57 bug where bundled page loaded using
+    // browser.windows.create won't show contents unless resized.
+    // See https://bugzilla.mozilla.org/show_bug.cgi?id=1402110
+    browser.windows.getCurrent((win) => {
+        browser.windows.update(win.id, {width:win.width+1});
+    });
     let url = browser.extension.getURL("page/popup.html");
     browser.history.deleteUrl({url: url}).then(() => {
         console.debug("Extension page removed from history");
         setupInputFilter();
-        updateTabs();
+        let tabList = [];
+        let historyList = [];
+        updateTabs().then((tabs) => {
+            tabList = tabs;
+            reRender(tabList, historyList);
+        });
         updateHistoryTabs();
     });
 
