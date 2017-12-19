@@ -1,10 +1,3 @@
-function switchToTab(tabID) {
-    browser.tabs.update(tabID, {
-        active: true
-    });
-    closeUp()
-}
-
 function closeUp() {
     //Not quite a toothpaste
     let winId = browser.windows.WINDOW_ID_CURRENT;
@@ -30,87 +23,40 @@ function updateTabs(filterText) {
     });
 }
 
-function openTab(url) {
-    getFirstWindow().then((w) => {
-        browser.tabs.create({url: url, windowId:w.id }).then(() => {
-            browser.windows.update(w.id, {focused: true});
-            closeUp();
-        });
-
-    });
-
-}
-
 function updateHistoryTabs(filterText) {
     filterText = filterText ? filterText : "";
-    let itemList = document.getElementById("historyList");
-    browser.history.search({
+    return browser.history.search({
         text: filterText,
         maxResults: 20
     }).then((items) => {
         let usedUrls = [];
-        while (itemList.lastChild) {
-            itemList.removeChild(itemList.lastChild);
-        }
-        let currentItems = document.createDocumentFragment();
+        let historyTabs = [];
         for (let item of items) {
             if (usedUrls.indexOf(item.url) === -1) {
-                let itemElement = document.createElement("li");
-                itemElement.setAttribute("data-item-url", item.url);
-                itemElement.addEventListener("click", () => {
-                    openTab(item.url);
-                });
-                itemElement.textContent = item.title;
-                currentItems.appendChild(itemElement);
+                let link = new HistoryLink(item.url, item.title, "history" + items.indexOf(item));
+                historyTabs.push(link);
                 usedUrls.concat(item.url);
             }
         }
-        itemList.appendChild(currentItems);
-    })
+        return historyTabs;
+    });
 }
 
-function getSelectedTabID() {
-    let listEntry = document.querySelector("#tabs>.selected");
-    return parseInt(listEntry.getAttribute("data-tab-id"));
-}
-
-function selectNextElement() {
-    let selectedEntry = document.querySelector("#tabList>.selected");
-    let nextElement = document.getElementById("tabList").querySelector(".selected + li");
-    if (nextElement) {
-        selectedEntry.classList.remove("selected");
-        nextElement.classList.add("selected");
-    }
-}
-
-function selectPreviousElement() {
-    let tabList = document.getElementById("tabList");
-    let selectedEntry = tabList.querySelector(".selected");
-    let children = tabList.childNodes;
-    for (let i = 1; i < children.length; i++) {
-        if (children.item(i) === selectedEntry) {
-            selectedEntry.classList.remove("selected");
-            children.item(i - 1).classList.add("selected");
-            return;
-        }
-    }
-}
-
-function setupInputFilter() {
+function setupInputFilter(lists) {
     let searchInput = document.getElementById("search");
     //Use keydown instead of keyup to prevent the cursor from moving
     searchInput.addEventListener("keydown", (event) => {
         switch (event.key) {
             case "ArrowDown":
-                selectNextElement();
+                selectNext(lists);
                 event.preventDefault();
                 break;
             case "ArrowUp":
-                selectPreviousElement();
+                selectPrevious(lists);
                 event.preventDefault();
                 break;
             case "Enter":
-                switchToTab(getSelectedTabID());
+                openSelectedTab(lists);
                 break;
             case "ArrowLeft":
             case "ArrowRight":
@@ -120,7 +66,6 @@ function setupInputFilter() {
                 closeUp();
                 break;
             default:
-                console.debug(event.key);
                 break;
 
         }
@@ -136,8 +81,7 @@ function setupInputFilter() {
                 // ignored
                 break;
             default:
-                updateTabs(searchInput.value);
-                updateHistoryTabs(searchInput.value);
+                updateAll(lists, searchInput.value);
                 break;
         }
     });
@@ -155,27 +99,74 @@ function getFirstWindow() {
     });
 }
 
-function reRender(tabList, historyList){
+function reRender(lists){
     let entryList = document.getElementById("entryList");
-    let currentItems = document.createDocumentFragment();
-    let tabSeparator = document.createElement("li");
-    tabSeparator.textContent = "Tab";
-    tabSeparator.classList.add("separator");
-    currentItems.appendChild(tabSeparator);
-    for (let tab of tabList) {
-        currentItems.appendChild(tab.render());
+    while (entryList.lastChild) {
+        entryList.removeChild(entryList.lastChild);
     }
-    tabSeparator = document.createElement("li");
-    tabSeparator.textContent = "History";
-    tabSeparator.classList.add("separator");
-    currentItems.appendChild(tabSeparator);
-    for (let tab of historyList) {
-        currentItems.appendChild(tab.render());
+
+    let currentItems = document.createDocumentFragment();
+    for (const tabList of lists) {
+        let tabSeparator = document.createElement("li");
+        tabSeparator.textContent = tabList.title;
+        tabSeparator.classList.add("separator");
+        currentItems.appendChild(tabSeparator);
+        for (let tab of tabList.tabs) {
+            currentItems.appendChild(tab.render());
+        }
     }
     entryList.appendChild(currentItems);
-    if(tabList){
-        tabList[0].select();
+    if(lists.length > 0){
+        lists[0].selectFirst();
     }
+}
+
+function openSelectedTab(lists) {
+    for (const tabList of lists) {
+        if(tabList.hasSelected()){
+            tabList.selected.open();
+        }
+    }
+}
+
+function selectNext(lists){
+    for (const tabList of lists) {
+        if(tabList.hasSelected()){
+            let selected = tabList.selectNext();
+            if(!selected){
+                let ind = lists.indexOf(tabList);
+                tabList.unselectAll();
+                lists[(ind + 1) % lists.length].selectFirst();
+            }
+            return;
+        }
+    }
+}
+
+function selectPrevious(lists){
+    for (const tabList of lists) {
+        if(tabList.hasSelected()){
+            let selected = tabList.selectPrev();
+            if(!selected){
+                let ind = lists.indexOf(tabList);
+                tabList.unselectAll();
+                lists[(ind - 1 + lists.length) % lists.length].selectLast();
+            }
+            return;
+        }
+    }
+}
+
+function updateAll(lists, filterText){
+    let result = Promise.resolve();
+    lists.forEach((l) => {
+        result = result.then(function (){
+            return l.update(filterText);
+        });
+    });
+    result.then(function (){
+        return reRender(lists);
+    });
 }
 
 function startUp() {
@@ -185,19 +176,18 @@ function startUp() {
     browser.windows.getCurrent((win) => {
         browser.windows.update(win.id, {width:win.width+1});
     });
+
     let url = browser.extension.getURL("page/popup.html");
     browser.history.deleteUrl({url: url}).then(() => {
         console.debug("Extension page removed from history");
-        setupInputFilter();
-        let tabList = [];
-        let historyList = [];
-        updateTabs().then((tabs) => {
-            tabList = tabs;
-            reRender(tabList, historyList);
-        });
-        updateHistoryTabs();
-    });
+        let lists = [
+            new TabList("Tabs", updateTabs),
+            new TabList("History", updateHistoryTabs)
+        ];
 
+        updateAll(lists, null);
+        setupInputFilter(lists);
+    });    
 }
 
 document.addEventListener("DOMContentLoaded", startUp);
