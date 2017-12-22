@@ -1,7 +1,10 @@
 function closeUp() {
     //Not quite a toothpaste
-    let winId = browser.windows.WINDOW_ID_CURRENT;
-    browser.windows.remove(winId);
+    let url = browser.extension.getURL("page/popup.html");
+    browser.history.deleteUrl({url: url + "#"}).then(() => {
+            let winId = browser.windows.WINDOW_ID_CURRENT;
+            browser.windows.remove(winId);
+    })
 }
 
 function updateTabs(filterText) {
