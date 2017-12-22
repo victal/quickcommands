@@ -86,6 +86,11 @@ function setupInputFilter(lists) {
         }
     });
     searchInput.focus();
+    searchInput.addEventListener("blur", (ev) => {
+        setTimeout(function() {
+            searchInput.focus()
+        }, 10);
+    });
 }
 
 function getFirstWindow() {
