@@ -1,4 +1,4 @@
-    function closeUp() {
+function closeUp() {
     //Not quite a toothpaste
     let url = browser.extension.getURL("page/popup.html");
     browser.history.deleteUrl({url: url + "#"}).then(() => {
@@ -179,6 +179,18 @@ function updateAll(lists, filterText){
     });
 }
 
+function updatePageStyle() {
+    if(browser.theme){
+        console.log("Your browser supports the theme API!");
+        return browser.theme.getCurrent().then((theme) => {
+            console.log(theme.colors.accentcolor);
+            console.log(theme.colors.textcolor);
+            return Promise.resolve();
+        });
+    }
+    return Promise.resolve();
+}
+
 function startUp() {
     // Fix for Fx57 bug where bundled page loaded using
     // browser.windows.create won't show contents unless resized.
@@ -186,18 +198,19 @@ function startUp() {
     browser.windows.getCurrent((win) => {
         browser.windows.update(win.id, {width:win.width+1});
     });
-
     let url = browser.extension.getURL("page/popup.html");
-    browser.history.deleteUrl({url: url}).then(() => {
-        console.debug("Extension page removed from history");
-        let lists = [
-            new TabList("Tabs", updateTabs),
-            new TabList("History", updateHistoryTabs)
-        ];
+    updatePageStyle().then(() => {
+        return browser.history.deleteUrl({url: url}).then(() => {
+            console.debug("Extension page removed from history");
+            let lists = [
+                new TabList("Tabs", updateTabs),
+                new TabList("History", updateHistoryTabs)
+            ];
 
-        updateAll(lists, null);
-        setupInputFilter(lists);
-    });    
+            updateAll(lists, null);
+            setupInputFilter(lists);
+        });    
+    });
 }
 
 document.addEventListener("DOMContentLoaded", startUp);
