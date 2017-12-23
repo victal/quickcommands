@@ -4,34 +4,54 @@
     font-size: small;
 }
 
+html {
+    overflow-y: scroll;
+}
+
 html, body {
-    margin-top: 0;
+    margin: 0;
     min-height: 100%;
 }
 
 form, input {
     width: 100%;
+    border: none;
+}
+
+form {
+    border: none;
+    border-bottom: 1px solid #222222;
 }
 
 #search {
     padding-top: 2%;
     padding-bottom: 2%;
-    margin-left: 3%;
-    margin-right: 3%;
-    width: 94%;
-    font-size:xx-large;
-    border: none;
-    border-bottom: 1px solid #222222;
+    width: 90%;
+    font-size:250%;
+    margin-left: 5%
 }
 
 ul {
+    width: 95%;
+    padding-left: 2%;
     list-style: none;
 }
 
 li {
-
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0.25em 0 0.25em 2em;
 }
+
+li.separator {
+    padding: 0.25em 0 0.25em 0;
+    font-size: 95%;
+}
+
 li.selected {
     color: white;
     background-color: #222222;
 }
+
+
