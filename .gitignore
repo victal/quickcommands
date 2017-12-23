@@ -1,2 +1,4 @@
 #Webstorm Files
 .idea/
+#Build files
+web-ext-artifacts/
