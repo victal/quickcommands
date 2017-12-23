@@ -1,9 +1,9 @@
-function closeUp() {
+    function closeUp() {
     //Not quite a toothpaste
     let url = browser.extension.getURL("page/popup.html");
     browser.history.deleteUrl({url: url + "#"}).then(() => {
-            let winId = browser.windows.WINDOW_ID_CURRENT;
-            browser.windows.remove(winId);
+        let winId = browser.windows.WINDOW_ID_CURRENT;
+        browser.windows.remove(winId);
     })
 }
 
@@ -115,12 +115,14 @@ function reRender(lists){
 
     let currentItems = document.createDocumentFragment();
     for (const tabList of lists) {
-        let tabSeparator = document.createElement("li");
-        tabSeparator.textContent = tabList.title;
-        tabSeparator.classList.add("separator");
-        currentItems.appendChild(tabSeparator);
-        for (let tab of tabList.tabs) {
-            currentItems.appendChild(tab.render());
+        if(tabList.length > 0){
+            let tabSeparator = document.createElement("li");
+            tabSeparator.textContent = tabList.title;
+            tabSeparator.classList.add("separator");
+            currentItems.appendChild(tabSeparator);
+            for (let tab of tabList.tabs) {
+                currentItems.appendChild(tab.render());
+            }
         }
     }
     entryList.appendChild(currentItems);

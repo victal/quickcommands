@@ -50,6 +50,9 @@ class TabList {
             this.selected = null;
         }
     }
+    get length() {
+        return this.tabs.length;
+    }
 }
 
 class Tab {
