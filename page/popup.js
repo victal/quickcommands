@@ -127,7 +127,12 @@ function reRender(lists){
     }
     entryList.appendChild(currentItems);
     if(lists.length > 0){
-        lists[0].selectFirst();
+        for(const tabList of lists){
+            if(tabList.length > 0 ){
+                tabList.selectFirst();
+                return;
+            }
+        }
     }
 }
 
