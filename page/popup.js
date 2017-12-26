@@ -2,9 +2,9 @@ function closeUp() {
     //Not quite a toothpaste
     let url = browser.extension.getURL("page/popup.html");
     browser.history.deleteUrl({url: url + "#"}).then(() => {
-        let winId = browser.windows.WINDOW_ID_CURRENT;
+       let winId = browser.windows.WINDOW_ID_CURRENT;
         browser.windows.remove(winId);
-    })
+    });
 }
 
 function updateTabs(filterText) {
@@ -16,7 +16,7 @@ function updateTabs(filterText) {
         for (let tab of tabs) {
             if (filterText) {
                 if (!(filterRegex.test(tab.title) || filterRegex.test(tab.url))) {
-                    continue
+                    continue;
                 }
             }
             let tabElement = new Tab(tab.id, tab.title);
@@ -91,7 +91,7 @@ function setupInputFilter(lists) {
     searchInput.focus();
     searchInput.addEventListener("blur", (ev) => {
         setTimeout(function() {
-            searchInput.focus()
+            searchInput.focus();
         }, 10);
     });
 }
