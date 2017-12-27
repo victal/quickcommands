@@ -151,7 +151,11 @@ function selectNext(lists){
             if(!selected){
                 let ind = lists.indexOf(tabList);
                 tabList.unselectAll();
-                lists[(ind + 1) % lists.length].selectFirst();
+                let selected = false, nextInd = ind + 1;
+                while(!selected){
+                   selected = lists[nextInd % lists.length].selectFirst();
+                   nextInd += 1; 
+                }
             }
             return;
         }
@@ -165,7 +169,11 @@ function selectPrevious(lists){
             if(!selected){
                 let ind = lists.indexOf(tabList);
                 tabList.unselectAll();
-                lists[(ind - 1 + lists.length) % lists.length].selectLast();
+                let selected = false, nextInd = ind - 1 + lists.length;
+                while(!selected){
+                    selected = lists[nextInd % lists.length].selectLast();
+                    nextInd -= 1;
+                }
             }
             return;
         }

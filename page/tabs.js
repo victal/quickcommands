@@ -13,13 +13,21 @@ class TabList {
         })
     }
     selectFirst() {
-        this.tabs[0].select();
-        this.selected = this.tabs[0];
+        if(this.tabs.length > 0){
+            this.tabs[0].select();
+            this.selected = this.tabs[0];
+            return true;
+        }
+        return false;
     }
     selectLast(){
-        let ind = this.tabs.length - 1;
-        this.tabs[ind].select();
-        this.selected = this.tabs[ind];
+        if(this.tabs.length > 0) {
+            let ind = this.tabs.length - 1;
+            this.tabs[ind].select();
+            this.selected = this.tabs[ind];
+            return true;
+        }
+        return false;
     }
     selectNext(){
         let ind = this.tabs.indexOf(this.selected);
