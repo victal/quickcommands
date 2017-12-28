@@ -30,15 +30,19 @@ function updateHistoryTabs(filterText) {
     filterText = filterText ? filterText : "";
     return browser.history.search({
         text: filterText,
-        maxResults: 20
+        startTime: 0,
+        maxResults: 100
     }).then((items) => {
         let usedUrls = [];
         let historyTabs = [];
         for (let item of items) {
-            if (usedUrls.indexOf(item.url) === -1) {
-                let link = new HistoryLink(item.url, item.title, "history" + items.indexOf(item));
+            //crude atttempt at not duplicating urls
+            let url = new URL(item.url);
+            let cleanUrl = item.url.replace(url.hash, "");
+            if (usedUrls.indexOf(cleanUrl) === -1 && item.title.trim().length > 0) {
+                let link = new HistoryLink(cleanUrl, item.title, "history" + items.indexOf(item));
                 historyTabs.push(link);
-                usedUrls.concat(item.url);
+                usedUrls.concat(cleanUrl);
             }
         }
         return historyTabs;
