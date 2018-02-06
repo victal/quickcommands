@@ -1,5 +1,4 @@
 function closeUp() {
-    //Not quite a toothpaste
     let url = browser.extension.getURL("page/popup.html");
     browser.history.deleteUrl({url: url + "#"}).then(() => {
        let winId = browser.windows.WINDOW_ID_CURRENT;
@@ -101,7 +100,6 @@ function setupInputFilter(lists) {
 }
 
 function getFirstWindow() {
-    //TODO: Create if there is none
     return browser.windows.getAll().then((windows) => {
         return browser.windows.get(Math.min.apply(Math, windows.filter((w) => {
             return w.type === 'normal';
@@ -191,7 +189,7 @@ function updateAll(lists, filterText){
             return l.update(filterText);
         });
     });
-    result.then(function (){
+    return result.then(function (){
         return reRender(lists);
     });
 }
@@ -223,9 +221,8 @@ function startUp() {
                 new TabList("Tabs", updateTabs),
                 new TabList("History", updateHistoryTabs)
             ];
-
-            updateAll(lists, null);
             setupInputFilter(lists);
+            updateAll(lists, null);
         });    
     });
 }

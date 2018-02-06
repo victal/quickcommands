@@ -4,10 +4,6 @@
     font-size: small;
 }
 
-html {
-    overflow-y: scroll;
-}
-
 html, body {
     margin: 0;
     min-height: 100%;
@@ -16,9 +12,12 @@ html, body {
 form, input {
     width: 100%;
     border: none;
+    background-color: white;
 }
 
+
 form {
+    position: fixed;
     border: none;
     border-bottom: 1px solid #222222;
 }
@@ -32,9 +31,13 @@ form {
 }
 
 ul {
-    width: 95%;
     padding-left: 2%;
     list-style: none;
+    height: calc(100vw - 65px);
+}
+
+#entryContainer {
+    padding-top: 65px;
 }
 
 li {
@@ -54,5 +57,3 @@ li.selected {
     color: white;
     background-color: #222222;
 }
-
-

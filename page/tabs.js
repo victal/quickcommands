@@ -81,7 +81,9 @@ class Tab {
     }
 
     select(){
-        document.getElementById(this.tabID).classList.add("selected");
+        let element = document.getElementById(this.tabID);
+        element.classList.add("selected");
+        element.scrollIntoView(false);
         this.selected = true;
     }
 
@@ -117,7 +119,9 @@ class HistoryLink {
     }
 
     select(){
-        document.getElementById(this.id).classList.add("selected");
+        let element = document.getElementById(this.id);
+        element.classList.add("selected");
+        element.scrollIntoView(false);
         this.selected = true;
     }
 
