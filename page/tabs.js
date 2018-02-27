@@ -100,7 +100,7 @@ class Tab {
     }
 }
 
-class HistoryLink {
+class Link {
     constructor(url, title, id){
         this.url = url;
         this.title = title;

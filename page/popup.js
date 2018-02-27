@@ -25,6 +25,21 @@ function updateTabs(filterText) {
     });
 }
 
+function updateBookmarks(filterText) {
+    filterText = filterText ? filterText : "";
+    return browser.bookmarks.search({
+        query: filterText
+    }).then((items) => {
+        let tabs = [];
+        for(let item of items){
+            if(item.type === 'bookmark' && item.title.trim().length > 0){
+                tabs.push(new Link(item.url, item.title, "bookmark" + item.id));
+            }
+        }
+        return tabs;
+    });
+}
+
 function updateHistoryTabs(filterText) {
     filterText = filterText ? filterText : "";
     return browser.history.search({
@@ -39,7 +54,7 @@ function updateHistoryTabs(filterText) {
             let url = new URL(item.url);
             let cleanUrl = item.url.replace(url.hash, "");
             if (usedUrls.indexOf(cleanUrl) === -1 && item.title.trim().length > 0) {
-                let link = new HistoryLink(cleanUrl, item.title, "history" + items.indexOf(item));
+                let link = new Link(cleanUrl, item.title, "history" + items.indexOf(item));
                 historyTabs.push(link);
                 usedUrls.concat(cleanUrl);
             }
@@ -219,7 +234,8 @@ function startUp() {
             console.debug("Extension page removed from history");
             let lists = [
                 new TabList("Tabs", updateTabs),
-                new TabList("History", updateHistoryTabs)
+                new TabList("History", updateHistoryTabs),
+                new TabList("Bookmarks", updateBookmarks)
             ];
             setupInputFilter(lists);
             updateAll(lists, null);
