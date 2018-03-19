@@ -1,7 +1,7 @@
 function closeUp() {
     let url = browser.extension.getURL("page/popup.html");
     browser.history.deleteUrl({url: url + "#"}).then(() => {
-       let winId = browser.windows.WINDOW_ID_CURRENT;
+        let winId = browser.windows.WINDOW_ID_CURRENT;
         browser.windows.remove(winId);
     });
 }
@@ -33,7 +33,11 @@ function updateBookmarks(filterText) {
         let tabs = [];
         for(let item of items){
             if(item.type === 'bookmark' && item.title.trim().length > 0){
-                tabs.push(new Link(item.url, item.title, "bookmark" + item.id));
+                //Limit bookmarks to http.* because of limitations on what we can open from an extension
+                let allowedUrl = !item.url.toLowerCase().startsWith('place') && !item.url.toLowerCase().startsWith('about');
+                if(allowedUrl){
+                    tabs.push(new Link(item.url, item.title, "bookmark" + item.id));
+                }
             }
         }
         return tabs;
@@ -51,9 +55,10 @@ function updateHistoryTabs(filterText) {
         let historyTabs = [];
         for (let item of items) {
             //crude atttempt at not duplicating urls
+            let allowedUrl = !item.url.toLowerCase().startsWith('place') && !item.url.toLowerCase().startsWith('about');
             let url = new URL(item.url);
             let cleanUrl = item.url.replace(url.hash, "");
-            if (usedUrls.indexOf(cleanUrl) === -1 && item.title.trim().length > 0) {
+            if (usedUrls.indexOf(cleanUrl) === -1 && item.title.trim().length > 0 && allowedUrl) {
                 let link = new Link(cleanUrl, item.title, "history" + items.indexOf(item));
                 historyTabs.push(link);
                 usedUrls.concat(cleanUrl);
@@ -178,8 +183,8 @@ function selectNext(lists){
                 tabList.unselectAll();
                 let selected = false, nextInd = ind + 1;
                 while(!selected){
-                   selected = lists[nextInd % lists.length].selectFirst();
-                   nextInd += 1; 
+                    selected = lists[nextInd % lists.length].selectFirst();
+                    nextInd += 1; 
                 }
             }
             return;

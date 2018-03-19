@@ -121,6 +121,7 @@ class Link {
         tabElement.setAttribute("id", this.id);
         url.classList.add('pull-right');
         url.classList.add('tab-content');
+        url.classList.add('tab-url');
         tabElement.addEventListener("click", () => {
             this.open()
         });
