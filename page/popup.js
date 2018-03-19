@@ -134,8 +134,16 @@ function reRender(lists){
     for (const tabList of lists) {
         if(tabList.length > 0){
             let tabSeparator = document.createElement("li");
-            tabSeparator.textContent = tabList.title;
             tabSeparator.classList.add("separator");
+            let separatorName = document.createElement('span');
+            separatorName.textContent = tabList.title;
+            separatorName.classList.add('pull-left');
+            let count = document.createElement('span');
+            count.textContent = tabList.length;
+            count.classList.add('count');
+            count.classList.add('pull-right');
+            tabSeparator.appendChild(separatorName);
+            tabSeparator.appendChild(count);
             currentItems.appendChild(tabSeparator);
             for (let tab of tabList.tabs) {
                 currentItems.appendChild(tab.render());

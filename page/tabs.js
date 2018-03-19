@@ -110,11 +110,20 @@ class Link {
 
     render(){
         let tabElement = document.createElement("li");
+        let title = document.createElement('span');
+        title.textContent = this.title;
+        title.classList.add('pull-left');
+        title.classList.add('tab-content');
+        let url = document.createElement('span');
+        url.textContent = this.url;
+        tabElement.appendChild(title);
+        tabElement.appendChild(url);
         tabElement.setAttribute("id", this.id);
+        url.classList.add('pull-right');
+        url.classList.add('tab-content');
         tabElement.addEventListener("click", () => {
             this.open()
         });
-        tabElement.textContent = this.title;
         return tabElement;
     }
 

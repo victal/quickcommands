@@ -57,3 +57,24 @@ li.selected {
     color: white;
     background-color: #222222;
 }
+
+.pull-left {
+    float: left;
+}
+
+.pull-right {
+    float: right;
+}
+
+.count {
+    border-radius: 5px;
+    padding: 0px 0.3em 0px 0.2em;
+    background-color: #BDBDBD;
+    margin-right: 2%;
+}
+
+.tab-content {
+    width: 47%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
