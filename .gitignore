@@ -2,3 +2,5 @@
 .idea/
 #Build files
 web-ext-artifacts/
+#Temporary assets
+*.png
