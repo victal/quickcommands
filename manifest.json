@@ -21,9 +21,14 @@
 
   "permissions": [
     "bookmarks",
+    "storage",
     "tabs",
     "history"
   ],
+  "options_ui": {
+    "page": "options/options.html",
+    "browser_style": true 
+  },
 
   "commands": {
     "quick-commands": {

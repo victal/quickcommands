@@ -1,0 +1,22 @@
+.colorInput {
+  width: 40%;
+}
+.colorInput:after { 
+   content: ""; 
+   visibility: hidden; 
+   display: block; 
+   height: 0; 
+   clear: both;
+}
+.colorInput > label {
+  float: left;
+}
+.colorInput > input {
+  float: right;
+}
+#theme {
+  margin-left: 16px;
+}
+#submit {
+  margin-top: 20px;
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="options.css" type="text/css" media="all" />
+  </head>
+
+<body>
+  <form id="form">
+    <div id="themeBlock">
+        <label for="theme">Theme</label>
+        <select name="theme" id="theme">
+          <option value="default">Default</option>
+          <option value="dark">Dark</option>
+          <option value="custom">Custom</option>
+        </select>
+      <div id="custom" style="display: none">
+        <h3>Custom Theme</h3>
+        <div class="colorInput">
+          <label for="main-bg-color">Background:</label>
+          <input type="color" name="main-bg-color" id="main-bg-color" value="" />
+        </div>
+        <div class="colorInput">
+          <label for="search-bg-color">Search background:</label>
+          <input type="color" name="search-bg-color" id="search-bg-color" value="" />
+        </div>
+        <div class="colorInput">
+          <label for="main-text-color">Main Text:</label>
+          <input type="color" name="main-text-color" id="main-text-color" value="" />
+        </div>
+        <div class="colorInput">
+          <label for="accent-bg-color">Selected Entry Background:</label>
+          <input type="color" name="accent-bg-color" id="accent-bg-color" value="" />
+        </div>
+        <div class="colorInput">
+          <label for="accent-text-color">Link Text:</label>
+          <input type="color" name="accent-text-color" id="accent-text-color" value="" />
+        </div>
+        <div class="colorInput">
+          <label for="selected-bg-color">Selected Entry Background:</label>
+          <input type="color" name="selected-bg-color" id="selected-bg-color" value="" />
+        </div>
+        <div class="colorInput">
+          <label for="selected-text-color">Selected Entry Text:</label>
+          <input type="color" name="selected-text-color" id="selected-text-color" value="" />
+        </div>
+      </div>
+    </div>
+    <div>
+      <!--<label for="">Search Engine</label>-->
+      <!--<select name="search" id="search">-->
+        <!--<option value="duckduckgo">DuckDuckGo</option>-->
+        <!--<option value="google">Google</option>-->
+      <!--</select>-->
+    </div>
+    <div id="submit">
+      <input type="submit" name="save" id="save" value="Save" />
+    </div>
+  </form>
+  <script src="options.js"></script>
+</body>
+
+</html>

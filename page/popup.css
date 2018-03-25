@@ -1,10 +1,9 @@
 html {
     --main-bg-color: #ececec;
     --search-bg-color: #ffffff;
-    --main-text-color: #000000;
-    --search-border-color: #4A90D9;
+    --main-text-color: #FF0000;
+    --accent-bg-color: #4A90D9;
     --accent-text-color: #868686;
-    --selected-bg-color: #222222;
     --selected-text-color: #ffffff;
 }
 
@@ -25,13 +24,14 @@ form, input {
     width: 100%;
     border: none;
     background-color: var(--search-bg-color);
+    color: var(--main-text-color);
 }
 
 
 form {
     position: fixed;
     border: none;
-    border-bottom: 1px solid var(--search-border-color);
+    border-bottom: 1px solid var(--accent-bg-color);
 }
 
 #search {
@@ -67,7 +67,7 @@ li.separator {
 
 li.selected, .selected .tab-content {
     color: white;
-    background-color: var(--search-border-color);
+    background-color: var(--accent-bg-color);
 }
 
 .pull-left {

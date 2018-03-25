@@ -222,18 +222,6 @@ function updateAll(lists, filterText){
     });
 }
 
-function updatePageStyle() {
-    if(browser.theme){
-        console.log("Your browser supports the theme API!");
-        return browser.theme.getCurrent().then((theme) => {
-            console.log(theme.colors.accentcolor);
-            console.log(theme.colors.textcolor);
-            return Promise.resolve();
-        });
-    }
-    return Promise.resolve();
-}
-
 function startUp() {
     // Fix for Fx57 bug where bundled page loaded using
     // browser.windows.create won't show contents unless resized.
@@ -242,7 +230,7 @@ function startUp() {
         browser.windows.update(win.id, {width:win.width+1});
     });
     let url = browser.extension.getURL("page/popup.html");
-    updatePageStyle().then(() => {
+    updateTheme().then(() => {
         return browser.history.deleteUrl({url: url}).then(() => {
             console.debug("Extension page removed from history");
             let lists = [
