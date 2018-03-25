@@ -4,7 +4,14 @@
   "version": "0.0.2",
   "description": "An add-on that tries to mimic Vivaldi's Quick commands window",
   "icons": {
-    "48": "icons/icon-48.png"
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  },
+  "applications": {
+    "gecko": {
+      "id":	"{e6ad355f-be44-4c03-9d49-a39f84ac702a}",
+      "strict_min_version": "57.0"
+    }
   },
   "content_scripts": [],
 
