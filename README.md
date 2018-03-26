@@ -4,7 +4,13 @@ An add-on for Firefox 57+ that adds a fast way to access open tabs and links fro
 
 Inspired by Vivaldi's [Quick Commands](https://help.vivaldi.com/article/quick-commands/) Menu.
 
-Installation can be done via AMO at https://addons.mozilla.org/en-US/firefox/addon/quick-commands/
+## Installation 
+
+Just click the button below to get to the installation page:
+
+[![Click here!](https://addons.cdn.mozilla.net/static/img/addons-buttons/AMO-button_1.png)](https://addons.mozilla.org/en-US/firefox/addon/quick-commands/)
+
+## Usage
 
 The quick commands window can be opened via the `Alt+Shift+R` shortcut.
 
