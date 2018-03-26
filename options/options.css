@@ -1,7 +1,10 @@
-.colorInput {
-  width: 40%;
+.half {
+  width: 47%;
 }
-.colorInput:after { 
+.colorInput {
+  width: 100%;
+}
+.colorInput:after, .pull-right:after { 
    content: ""; 
    visibility: hidden; 
    display: block; 
@@ -19,4 +22,85 @@
 }
 #submit {
   margin-top: 20px;
+  width: 100%;
+}
+
+#preview {
+    --main-bg-color: #ececec;
+    --search-bg-color: #ffffff;
+    --main-text-color: #FF0000;
+    --accent-bg-color: #4A90D9;
+    --accent-text-color: #868686;
+    --selected-text-color: #ffffff;
+    color: var(--main-text-color);
+    background-color: var(--main-bg-color);
+    border: 1px dotted red;
+}
+#searchform, #preview input {
+    width: 100%;
+    border: none;
+    background-color: var(--search-bg-color);
+    color: var(--main-text-color);
+}
+
+
+#searchform {
+    border: none;
+    border-bottom: 1px solid var(--accent-bg-color);
+}
+
+#preview #search {
+    padding-top: 2%;
+    padding-bottom: 2%;
+    width: 90%;
+    font-size:250%;
+    margin-left: 5%
+}
+
+#preview ul {
+    padding-left: 2%;
+    list-style: none;
+    max-height: calc(100vh - 65px);
+}
+
+#preview li {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0.25em 0 0.25em 2em;
+    cursor: pointer;
+}
+
+#preview li.separator {
+    padding: 0.25em 0 0.25em 0;
+    font-size: 95%;
+}
+
+#preview li.selected, #preview .selected .tab-content {
+    color: white;
+    background-color: var(--accent-bg-color);
+}
+
+.pull-left {
+    float: left;
+}
+
+.pull-right {
+    float: right;
+}
+
+.count {
+    border-radius: 5px;
+    padding: 0px 0.3em 0px 0.2em;
+    margin-right: 2%;
+}
+
+.tab-content {
+    width: 47%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tab-url, li.separator {
+    color: var(--accent-text-color);
 }
