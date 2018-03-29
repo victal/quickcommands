@@ -1,7 +1,7 @@
 async function openPopup() {
     // Prevent the popup from opening multiple times
     let data = await browser.storage.local.get('popup');
-    if (data.popup.visible) return;
+    if (data && data.popup && data.popup.visible) return;
 
     let url = browser.extension.getURL("page/popup.html");
     browser.windows.create({

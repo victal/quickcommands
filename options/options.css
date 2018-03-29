@@ -110,3 +110,6 @@ select, input {
     clear: both;
 }
 
+#shortcut {
+    width: 50px;
+}

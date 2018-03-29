@@ -97,9 +97,16 @@ function updatePreviewProperty(event){
 }
 
 function updateShortcut(){
+  let activator = document.querySelector('#shortcut').value;
+  let modifiers = Array.from(document.querySelectorAll(`#shortcutBlock input[name='modifier'], #shortcutBlock input[name='shift']`))
+                       .filter(f => f.checked)
+                       .map(f => f.value);
+  modifiers.push(activator);
+  let shortcut = modifiers.join('+')
+
   browser.commands.update({
     name: commandName,
-    shortcut: document.querySelector('#shortcut').value
+    shortcut
   });
 }
 
@@ -107,10 +114,20 @@ async function updateShortcutUI() {
   let commands = await browser.commands.getAll();
   for (command of commands) {
     if (command.name === commandName) {
-      document.querySelector('#shortcut').value = command.shortcut;
+      populateShortcutSettings(command.shortcut)
     }
   }
 }
+
+function populateShortcutSettings(shortcut) {
+  let keys = shortcut.split('+');
+  let activator = keys.pop();
+  keys.forEach(modifier => {
+    document.querySelector(`#shortcutBlock input[value='${modifier}']`).setAttribute('checked', true)
+  });
+  document.querySelector('#shortcut').value = activator;
+}
+
 
 function resetShortcut(){
   browser.commands.reset(commandName);
