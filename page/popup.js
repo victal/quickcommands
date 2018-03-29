@@ -184,7 +184,7 @@ function selectNext(lists){
                 let selected = false, nextInd = ind + 1;
                 while(!selected){
                     selected = lists[nextInd % lists.length].selectFirst();
-                    nextInd += 1; 
+                    nextInd += 1;
                 }
             }
             return;
@@ -240,7 +240,7 @@ function startUp() {
             ];
             setupInputFilter(lists);
             updateAll(lists, null);
-        });    
+        });
     });
 }
 
