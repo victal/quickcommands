@@ -39,7 +39,8 @@ form {
     padding-bottom: 2%;
     width: 90%;
     font-size:250%;
-    margin-left: 5%
+    margin-left: 5%;
+    height: 65px;
 }
 
 ul {
