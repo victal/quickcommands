@@ -4,11 +4,11 @@
 .colorInput {
   width: 100%;
 }
-.colorInput:after, .pull-right:after { 
-   content: ""; 
-   visibility: hidden; 
-   display: block; 
-   height: 0; 
+.colorInput:after, .pull-right:after {
+   content: "";
+   visibility: hidden;
+   display: block;
+   height: 0;
    clear: both;
 }
 .colorInput > label {
@@ -17,7 +17,7 @@
 .colorInput > input {
   float: right;
 }
-#theme {
+select, input {
   margin-left: 16px;
 }
 #submit {
@@ -103,4 +103,13 @@
 
 .tab-url, li.separator {
     color: var(--accent-text-color);
+}
+
+.optionBlock {
+    margin: 0 0 15px;
+    clear: both;
+}
+
+#shortcut {
+    width: 50px;
 }
