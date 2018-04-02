@@ -1,3 +1,4 @@
+const commandName = 'quick-commands';
 const themes = {
   'default': {
     'main-bg-color': '#ececec',
@@ -16,6 +17,7 @@ const themes = {
     'selected-text-color': '#f8fbfe'
   }
 }
+
 
 let selectedTheme = themes['default'];
 
@@ -38,6 +40,7 @@ function save(event) {
     theme: theme,
     themeName: themeName
   });
+  updateShortcut();
   event.preventDefault();
   return false;
 }
@@ -45,9 +48,9 @@ function save(event) {
 function toggleCustomColors(event) {
   let theme = event.target.value;
   if(theme === 'custom'){
-    document.getElementById('custom').style.display = 'block'; 
+    document.getElementById('custom').style.display = 'block';
     if(selectedTheme){
-      let inputs = document.querySelectorAll('#custom  input');
+      let inputs = document.querySelectorAll('#custom input');
       for (var input of inputs) {
         input.value = selectedTheme[input.getAttribute('id')];
       }
@@ -55,7 +58,7 @@ function toggleCustomColors(event) {
     }
   }
   else{
-    document.getElementById('custom').style.display = 'none'; 
+    document.getElementById('custom').style.display = 'none';
     selectedTheme = themes[theme];
   }
 }
@@ -71,21 +74,20 @@ function updateLivePreview(event){
   doUpdatePreview(theme);
 }
 
-function restoreOptions(){
-  var gettingItem = browser.storage.sync.get(['themeName', 'theme']);
-  gettingItem.then((res) => {
-    let themeName = res.themeName || 'default'
-    let theme = res.theme || themes['default'];
-    document.querySelector('#theme').value = themeName;
-    if(themeName == 'custom'){
-      let inputs = document.querySelectorAll('#custom  input');
-      for (var input of inputs) {
-        input.value = theme[input.getAttribute('id')];
-      }
-      document.getElementById('custom').style.display = 'block'; 
+async function restoreOptions(){
+  let themeObj = await browser.storage.sync.get(['themeName', 'theme']);
+  let themeName = themeObj.themeName || 'default'
+  let theme = themeObj.theme || themes['default'];
+  document.querySelector('#theme').value = themeName;
+  if(themeName == 'custom'){
+    let inputs = document.querySelectorAll('#custom  input');
+    for (var input of inputs) {
+      input.value = theme[input.getAttribute('id')];
     }
-    doUpdatePreview(theme);
-  });
+    document.getElementById('custom').style.display = 'block';
+  }
+  doUpdatePreview(theme);
+  updateShortcutUI();
 }
 
 function updatePreviewProperty(event){
@@ -94,13 +96,52 @@ function updatePreviewProperty(event){
   preview.style.setProperty('--' + input.getAttribute('id'), input.value);
 }
 
+function updateShortcut(){
+  let activator = document.querySelector('#shortcut').value;
+  let modifiers = Array.from(document.querySelectorAll(`#shortcutBlock input[name='modifier'], #shortcutBlock input[name='shift']`))
+                       .filter(f => f.checked)
+                       .map(f => f.value);
+  modifiers.push(activator);
+  let shortcut = modifiers.join('+')
+
+  browser.commands.update({
+    name: commandName,
+    shortcut
+  });
+}
+
+async function updateShortcutUI() {
+  let commands = await browser.commands.getAll();
+  for (command of commands) {
+    if (command.name === commandName) {
+      populateShortcutSettings(command.shortcut)
+    }
+  }
+}
+
+function populateShortcutSettings(shortcut) {
+  let keys = shortcut.split('+');
+  let activator = keys.pop();
+  keys.forEach(modifier => {
+    document.querySelector(`#shortcutBlock input[value='${modifier}']`).setAttribute('checked', true)
+  });
+  document.querySelector('#shortcut').value = activator;
+}
+
+
+function resetShortcut(){
+  browser.commands.reset(commandName);
+  updateShortcutUI();
+}
+
 function start() {
   document.getElementById('form').addEventListener('submit', save);
   document.getElementById('theme').addEventListener('change', toggleCustomColors);
   document.getElementById('theme').addEventListener('change', updateLivePreview);
+  document.getElementById('reset_shortcut').addEventListener('click', resetShortcut);
   for (const input of document.querySelectorAll('input[type=color]')) {
     input.addEventListener('change', updatePreviewProperty);
   }
   restoreOptions();
-}
+};
 document.addEventListener('DOMContentLoaded', start);
