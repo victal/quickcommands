@@ -21,6 +21,10 @@ const themes = {
 
 let selectedTheme = themes['default'];
 
+function commandUpdateSupported() {
+  return browser.commands.hasOwnProperty('update');
+}
+
 function getTheme(themeName){
   if(themeName === 'custom') {
     let inputs = document.querySelectorAll('#custom  input');
@@ -40,7 +44,9 @@ function save(event) {
     theme: theme,
     themeName: themeName
   });
-  updateShortcut();
+  if(commandUpdateSupported()){
+    updateShortcut();
+  }
   event.preventDefault();
   return false;
 }
@@ -87,7 +93,9 @@ async function restoreOptions(){
     document.getElementById('custom').style.display = 'block';
   }
   doUpdatePreview(theme);
-  updateShortcutUI();
+  if(commandUpdateSupported()){
+    updateShortcutUI();
+  }
 }
 
 function updatePreviewProperty(event){
@@ -99,8 +107,8 @@ function updatePreviewProperty(event){
 function updateShortcut(){
   let activator = document.querySelector('#shortcut').value;
   let modifiers = Array.from(document.querySelectorAll(`#shortcutBlock input[name='modifier'], #shortcutBlock input[name='shift']`))
-                       .filter(f => f.checked)
-                       .map(f => f.value);
+    .filter(f => f.checked)
+    .map(f => f.value);
   modifiers.push(activator);
   let shortcut = modifiers.join('+')
 
@@ -111,6 +119,7 @@ function updateShortcut(){
 }
 
 async function updateShortcutUI() {
+  document.getElementById('shortcutBlock').style.display = 'block';
   let commands = await browser.commands.getAll();
   for (command of commands) {
     if (command.name === commandName) {
