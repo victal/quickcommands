@@ -29,3 +29,5 @@ browser.windows.onRemoved.addListener(async (winId) => {
         await browser.storage.local.set({popup: {id: winId, visible: false}});
     }
 });
+
+browser.browserAction.onClicked.addListener(openPopup);

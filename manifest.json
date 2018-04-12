@@ -2,7 +2,8 @@
   "manifest_version": 2,
   "name": "Quick Commands",
   "version": "0.0.2",
-  "description": "An add-on that tries to mimic Vivaldi's Quick commands window. Open with Alt-Shift-R",
+  "description":
+    "An add-on that tries to mimic Vivaldi's Quick commands window. Open with Alt-Shift-R",
   "icons": {
     "48": "icons/icon.svg",
     "96": "icons/icon.svg"
@@ -14,22 +15,21 @@
     }
   },
   "content_scripts": [],
-
   "background": {
     "scripts": ["background.js"]
   },
-
-  "permissions": [
-    "bookmarks",
-    "storage",
-    "tabs",
-    "history"
-  ],
+  "browser_action": {
+    "default_icon": {
+      "19": "icons/icon.svg",
+      "38": "icons/icon.svg"
+    },
+    "default_title": "Quick Commands"
+  },
+  "permissions": ["bookmarks", "storage", "tabs", "history"],
   "options_ui": {
     "page": "options/options.html",
-    "browser_style": true 
+    "browser_style": true
   },
-
   "commands": {
     "quick-commands": {
       "suggested_key": { "default": "Alt+Shift+R" },
