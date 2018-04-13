@@ -1,152 +1,151 @@
 class TabList {
-    constructor(title, search_fn){
-        this.title = title;
-        this.search = search_fn;
-        this.tabs = [];
-        this.selected = null;
+  constructor(title, search_fn) {
+    this.title = title
+    this.search = search_fn
+    this.tabs = []
+    this.selected = null
+  }
+  update(filterText) {
+    return this.search(filterText).then(results => {
+      this.tabs = results
+      this.selected = null
+      return results.length
+    })
+  }
+  selectFirst() {
+    if (this.tabs.length > 0) {
+      this.tabs[0].select()
+      this.selected = this.tabs[0]
+      return true
     }
-    update(filterText) {
-        return this.search(filterText).then((results) => {
-            this.tabs = results;
-            this.selected = null;
-            return results.length;
-        })
+    return false
+  }
+  selectLast() {
+    if (this.tabs.length > 0) {
+      let ind = this.tabs.length - 1
+      this.tabs[ind].select()
+      this.selected = this.tabs[ind]
+      return true
     }
-    selectFirst() {
-        if(this.tabs.length > 0){
-            this.tabs[0].select();
-            this.selected = this.tabs[0];
-            return true;
-        }
-        return false;
+    return false
+  }
+  selectNext() {
+    let ind = this.tabs.indexOf(this.selected)
+    if (ind === this.tabs.length - 1) {
+      return false
     }
-    selectLast(){
-        if(this.tabs.length > 0) {
-            let ind = this.tabs.length - 1;
-            this.tabs[ind].select();
-            this.selected = this.tabs[ind];
-            return true;
-        }
-        return false;
+    this.selected.unselect()
+    this.selected = this.tabs[ind + 1]
+    this.selected.select()
+    return true
+  }
+  selectPrev() {
+    let ind = this.tabs.indexOf(this.selected)
+    if (ind === 0) {
+      return false
     }
-    selectNext(){
-        let ind = this.tabs.indexOf(this.selected);
-        if (ind === this.tabs.length - 1){
-            return false;
-        }
-        this.selected.unselect();
-        this.selected = this.tabs[ind + 1];
-        this.selected.select();
-        return true;
+    this.selected.unselect()
+    this.selected = this.tabs[ind - 1]
+    this.selected.select()
+    return true
+  }
+  hasSelected() {
+    return this.selected != null
+  }
+  unselectAll() {
+    if (this.selected != null) {
+      this.selected.unselect()
+      this.selected = null
     }
-    selectPrev(){
-        let ind = this.tabs.indexOf(this.selected);
-        if (ind === 0){
-            return false;
-        }
-        this.selected.unselect();
-        this.selected = this.tabs[ind - 1];
-        this.selected.select();
-        return true;
-    }
-    hasSelected() {
-        return this.selected != null;
-    }
-    unselectAll(){
-        if(this.selected != null){
-            this.selected.unselect();
-            this.selected = null;
-        }
-    }
-    get length() {
-        return this.tabs.length;
-    }
+  }
+  get length() {
+    return this.tabs.length
+  }
 }
 
 class Tab {
-    constructor(tabID, title){
-        this.tabID = tabID;
-        this.title = title;
-        this.selected = false;
-    }
+  constructor(tabID, title) {
+    this.tabID = tabID
+    this.title = title
+    this.selected = false
+  }
 
-    render(){
-        let tabElement = document.createElement("li");
-        tabElement.setAttribute("id", this.tabID);
-        tabElement.addEventListener("click", () => {
-            this.open()
-        });
-        tabElement.textContent = this.title;
-        return tabElement;
-    }
+  render() {
+    let tabElement = document.createElement('li')
+    tabElement.setAttribute('id', this.tabID)
+    tabElement.addEventListener('click', () => {
+      this.open()
+    })
+    tabElement.textContent = this.title
+    return tabElement
+  }
 
-    select(){
-        let element = document.getElementById(this.tabID);
-        element.classList.add("selected");
-        element.scrollIntoView(false);
-        this.selected = true;
-    }
+  select() {
+    let element = document.getElementById(this.tabID)
+    element.classList.add('selected')
+    element.scrollIntoView(false)
+    this.selected = true
+  }
 
-    unselect(){
-        document.getElementById(this.tabID).classList.remove("selected");
-        this.selected = false;
-    }
+  unselect() {
+    document.getElementById(this.tabID).classList.remove('selected')
+    this.selected = false
+  }
 
-    open() {
-        browser.tabs.update(this.tabID, {
-            active: true
-        });
-        closeUp()
-    }
+  open() {
+    browser.tabs.update(this.tabID, {
+      active: true
+    })
+    closeUp()
+  }
 }
 
 class Link {
-    constructor(url, title, id){
-        this.url = url;
-        this.title = title;
-        this.id = id;
-        this.selected = false;
-    }
+  constructor(url, title, id) {
+    this.url = url
+    this.title = title
+    this.id = id
+    this.selected = false
+  }
 
-    render(){
-        let tabElement = document.createElement("li");
-        let title = document.createElement('span');
-        title.textContent = this.title;
-        title.classList.add('pull-left');
-        title.classList.add('tab-content');
-        let url = document.createElement('span');
-        url.textContent = this.url;
-        tabElement.appendChild(title);
-        tabElement.appendChild(url);
-        tabElement.setAttribute("id", this.id);
-        url.classList.add('pull-right');
-        url.classList.add('tab-content');
-        url.classList.add('tab-url');
-        tabElement.addEventListener("click", () => {
-            this.open()
-        });
-        return tabElement;
-    }
+  render() {
+    let tabElement = document.createElement('li')
+    let title = document.createElement('span')
+    title.textContent = this.title
+    title.classList.add('pull-left')
+    title.classList.add('tab-content')
+    let url = document.createElement('span')
+    url.textContent = this.url
+    tabElement.appendChild(title)
+    tabElement.appendChild(url)
+    tabElement.setAttribute('id', this.id)
+    url.classList.add('pull-right')
+    url.classList.add('tab-content')
+    url.classList.add('tab-url')
+    tabElement.addEventListener('click', () => {
+      this.open()
+    })
+    return tabElement
+  }
 
-    select(){
-        let element = document.getElementById(this.id);
-        element.classList.add("selected");
-        element.scrollIntoView(false);
-        this.selected = true;
-    }
+  select() {
+    let element = document.getElementById(this.id)
+    element.classList.add('selected')
+    element.scrollIntoView(false)
+    this.selected = true
+  }
 
-    unselect(){
-        document.getElementById(this.id).classList.remove("selected");
-        this.selected = false;
-    }
+  unselect() {
+    document.getElementById(this.id).classList.remove('selected')
+    this.selected = false
+  }
 
-    open() {
-        getFirstWindow().then((w) => {
-            browser.tabs.create({url:this.url, windowId:w.id }).then(() => {
-                browser.windows.update(w.id, {focused: true});
-                closeUp();
-            });
-
-        });
-    }
+  open() {
+    getFirstWindow().then(w => {
+      browser.tabs.create({ url: this.url, windowId: w.id }).then(() => {
+        browser.windows.update(w.id, { focused: true })
+        closeUp()
+      })
+    })
+  }
 }

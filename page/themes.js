@@ -1,27 +1,29 @@
 //TODO: Get rid of this
 const defaultTheme = {
-        'main-bg-color': '#ececec',
-        'search-bg-color': '#ffffff',
-        'main-text-color': '#000000',
-        'accent-text-color': '#868686',
-        'accent-bg-color': '#4A90D9',
-        'selected-text-color': '#ffffff'
-};
+  'main-bg-color': '#ececec',
+  'search-bg-color': '#ffffff',
+  'main-text-color': '#000000',
+  'accent-text-color': '#868686',
+  'accent-bg-color': '#4A90D9',
+  'selected-text-color': '#ffffff'
+}
 
 function applyTheme(theme) {
-    let html = document.getElementsByTagName('html')[0];
-    if(theme){
-        for (const prop of Object.keys(theme)) {
-            html.style.setProperty('--' + prop, theme[prop]);
-        }
+  let html = document.getElementsByTagName('html')[0]
+  if (theme) {
+    for (const prop of Object.keys(theme)) {
+      html.style.setProperty('--' + prop, theme[prop])
     }
-    else {
-        applyTheme(defaultTheme);
-    }
+  } else {
+    applyTheme(defaultTheme)
+  }
 }
 
 function updateTheme() {
-    return browser.storage.sync.get('theme').then((results) => {
-        applyTheme(results['theme']);
-    }, () => applyTheme(defaultTheme));
+  return browser.storage.sync.get('theme').then(
+    results => {
+      applyTheme(results['theme'])
+    },
+    () => applyTheme(defaultTheme)
+  )
 }
