@@ -1,9 +1,18 @@
-function closeUp() {
+async function closeUp() {
     let url = browser.extension.getURL("page/popup.html");
-    browser.history.deleteUrl({url: url + "#"}).then(() => {
-        let winId = browser.windows.WINDOW_ID_CURRENT;
-        browser.windows.remove(winId);
-    });
+    await browser.history.deleteUrl({url: url + "#"});
+    let winId = browser.windows.WINDOW_ID_CURRENT;
+    browser.windows.get(winId).then(async (winData) => {
+        await browser.storage.local.set({
+            popup: {
+                id: winData.id,
+                visible: false,
+                width: winData.width,
+                height: winData.height
+            }
+        })
+        await browser.windows.remove(winData.id);
+    })
 }
 
 function updateTabs(filterText) {
