@@ -7,6 +7,7 @@ async function openPopup() {
     // Prevent the popup from opening multiple times
     const winData = await getPopupData();
     if (winData.visible) return;
+    console.info(`Quick Commands opening with data: `, winData);
 
     const url = browser.extension.getURL("page/popup.html");
     browser.windows.create({
@@ -33,20 +34,19 @@ browser.commands.onCommand.addListener((command) => {
     openPopup();
 });
 
-browser.windows.onRemoved.addListener(async (winId) => {
-    // Listen for when our specific popup window is closed,
-    // then update its data to reflect that
+async function updatePopupData(request, sender, sendResponse) {
+    console.debug(`Saving window dimensions:`, request.popupWindow);
     const winData = await getPopupData();
-    if (winData.id === winId) {
-        await browser.storage.local.set({
-            popup: {
-                id: winData.id,
-                visible: false,
-                width: winData.width,
-                height: winData.height
-            }
-        });
-    }
-});
+    await browser.storage.local.set({
+        popup: {
+            id: winData.id,
+            visible: false,
+            width: request.popupWindow.width,
+            height: request.popupWindow.height
+        }
+    });
+    sendResponse({response: `Successfully saved window dimensions.`});
+}
 
 browser.browserAction.onClicked.addListener(openPopup);
+browser.runtime.onMessage.addListener(updatePopupData);

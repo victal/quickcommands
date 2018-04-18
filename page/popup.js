@@ -3,14 +3,6 @@ async function closeUp() {
     await browser.history.deleteUrl({url: url + "#"});
     let winId = browser.windows.WINDOW_ID_CURRENT;
     browser.windows.get(winId).then(async (winData) => {
-        await browser.storage.local.set({
-            popup: {
-                id: winData.id,
-                visible: false,
-                width: winData.width,
-                height: winData.height
-            }
-        })
         await browser.windows.remove(winData.id);
     })
 }
@@ -254,3 +246,18 @@ function startUp() {
 }
 
 document.addEventListener("DOMContentLoaded", startUp);
+
+// Save window size when closed
+// Uses runtime.sendMessage to avoid race conditions with async
+// functions that deal with browser.storage
+window.addEventListener("beforeunload", (e) => {
+    const sending = browser.runtime.sendMessage({
+        popupWindow: {
+            height: window.outerHeight,
+            width: window.outerWidth
+        }
+    });
+    sending.then((message) => console.info(message.response), (error) => console.error(error));
+    return;
+});
+
