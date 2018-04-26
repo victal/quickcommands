@@ -117,3 +117,7 @@ select, input {
 #shortcut {
     width: 50px;
 }
+
+#limitBlock input {
+    width:  50px;
+}

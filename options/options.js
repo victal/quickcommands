@@ -38,16 +38,17 @@ function getTheme(themeName){
 }
 
 function save(event) {
+  event.preventDefault();
   let themeName = document.getElementById('theme').value;
   let theme = getTheme(themeName);
   browser.storage.sync.set({
     theme: theme,
     themeName: themeName
   });
+  setLimit(getLimitValue());
   if(commandUpdateSupported()){
     updateShortcut();
   }
-  event.preventDefault();
   return false;
 }
 
@@ -93,6 +94,8 @@ async function restoreOptions(){
     document.getElementById('custom').style.display = 'block';
   }
   doUpdatePreview(theme);
+  updateLimitUI();
+
   if(commandUpdateSupported()){
     updateShortcutUI();
   }
@@ -137,10 +140,17 @@ function populateShortcutSettings(shortcut) {
   document.querySelector('#shortcut').value = activator;
 }
 
-
 function resetShortcut(){
   browser.commands.reset(commandName);
   updateShortcutUI();
+}
+
+function getLimitValue() {
+  return document.querySelector(`input[name='limit']`).valueAsNumber;
+}
+
+async function updateLimitUI() {
+  return document.querySelector(`input[name='limit']`).value = await getLimit();
 }
 
 function start() {
