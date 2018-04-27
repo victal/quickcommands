@@ -32,12 +32,16 @@ function updateBookmarks(filterText) {
         query: filterText
     }).then((items) => {
         let tabs = [];
+        let usedUrls = [];
         for(let item of items){
             if(item.type === 'bookmark' && item.title.trim().length > 0){
                 //Limit bookmarks to http.* because of limitations on what we can open from an extension
+                let url = new URL(item.url);
+                let cleanUrl = item.url.replace(url.hash, "").replace(url.search, "");
                 let allowedUrl = !item.url.toLowerCase().startsWith('place') && !item.url.toLowerCase().startsWith('about');
-                if(allowedUrl){
+                if(allowedUrl && usedUrls.indexOf(cleanUrl) === -1){
                     tabs.push(new Link(item.url, item.title, "bookmark" + item.id));
+                    usedUrls.push(cleanUrl);
                 }
             }
         }
@@ -62,7 +66,7 @@ function updateHistoryTabs(filterText) {
             if (usedUrls.indexOf(cleanUrl) === -1 && item.title.trim().length > 0 && allowedUrl) {
                 let link = new Link(cleanUrl, item.title, "history" + items.indexOf(item));
                 historyTabs.push(link);
-                usedUrls.concat(cleanUrl);
+                usedUrls.push(cleanUrl);
             }
         }
         return historyTabs;
