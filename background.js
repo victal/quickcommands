@@ -25,6 +25,14 @@ async function openPopup() {
                 height: winData.height
             }
         });
+        browser.windows.onFocusChanged.addListener(function(id) {
+            if(id !== winData.id) {
+                browser.windows.update(winData.id, {
+                    focused: true,
+                    drawAttention: true
+                });
+            }
+        });
     });
     //Deletion from history is done on the page Javascript to ensure loading from history doesn't include it
 }
