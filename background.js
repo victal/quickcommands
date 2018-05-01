@@ -50,3 +50,9 @@ async function updatePopupData(request, sender, sendResponse) {
 
 browser.browserAction.onClicked.addListener(openPopup);
 browser.runtime.onMessage.addListener(updatePopupData);
+getPopupData().then((data) => {
+    data.visible = false;
+    browser.storage.local.set({
+        popup: data
+    });
+});
