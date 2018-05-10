@@ -27,10 +27,7 @@ async function openPopup() {
         });
         browser.windows.onFocusChanged.addListener(function(id) {
             if(id !== winData.id) {
-                browser.windows.update(winData.id, {
-                    focused: true,
-                    drawAttention: true
-                });
+                browser.windows.remove(winData.id);
             }
         });
     });
