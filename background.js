@@ -1,7 +1,7 @@
 async function getPopupData() {
     const data = await browser.storage.local.get('popup');
     return Object.assign({}, data.popup);
-};
+}
 
 async function openPopup() {
     // Prevent the popup from opening multiple times
@@ -25,6 +25,7 @@ async function openPopup() {
                 height: winData.height
             }
         });
+        //Close window when focus is lost
         browser.windows.onFocusChanged.addListener(function(id) {
             if(id !== winData.id) {
                 browser.windows.remove(winData.id);
@@ -55,6 +56,8 @@ async function updatePopupData(request, sender, sendResponse) {
 
 browser.browserAction.onClicked.addListener(openPopup);
 browser.runtime.onMessage.addListener(updatePopupData);
+
+// Reset popup visibility in case firefox was forcibly closed
 getPopupData().then((data) => {
     data.visible = false;
     browser.storage.local.set({

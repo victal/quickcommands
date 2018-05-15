@@ -256,12 +256,12 @@ document.addEventListener("DOMContentLoaded", startUp);
 // functions that deal with browser.storage
 window.addEventListener("beforeunload", (e) => {
     const sending = browser.runtime.sendMessage({
+        //We send width - 1 due to the ff bug mentioned above
         popupWindow: {
             height: window.outerHeight,
-            width: window.outerWidth
+            width: window.outerWidth - 1
         }
     });
     sending.then((message) => console.info(message.response), (error) => console.error(error));
-    return;
 });
 
