@@ -10,7 +10,7 @@
     <form id="form">
       <div class="half pull-left">
         <div id="shortcutBlock" class="optionBlock">
-          <label for="shortcut">Keyboard shortcut</label>
+          <label for="shortcut">Keyboard shortcut:</label>
           <label><input type="radio" name="modifier" value="Alt"> Alt</label>
           <label><input type="radio" name="modifier" value="MacCtrl"> Ctrl</label>
           <label><input type="radio" name="modifier" value="Command"> Cmd</label>
@@ -18,8 +18,18 @@
           <input type="text" id="shortcut">
           <button id="reset_shortcut">Reset</button>
         </div>
+        <div id="listsBlock" class="optionBlock">
+          <label for="lists">Result groups to show:</label>
+          <label><input type="checkbox" name="lists[]" value="Tabs"> Current Tabs</label>
+          <label><input type="checkbox" name="lists[]" value="History"> History</label>
+          <label><input type="checkbox" name="lists[]" value="Bookmarks"> Bookmarks</label>
+        </div>
+        <div id="limitBlock" class="optionBlock">
+          <label for="lists">Number of results:</label>
+          <label><input type="number" name="limit" value="100" min="1"> per group</label>
+        </div>
         <div id="themeBlock" class="optionBlock">
-          <label for="theme">Theme</label>
+          <label for="theme">Theme:</label>
           <select name="theme" id="theme">
             <option value="default">Default</option>
             <option value="dark">Dark</option>
@@ -82,6 +92,7 @@
         </div>
       </div>
     </form>
+    <script src="../lib/utils.js"></script>
     <script src="options.js"></script>
   </body>
 
