@@ -146,8 +146,10 @@ function reRender(lists){
             let tabSeparator = tabList.renderSeparator();
             currentItems.appendChild(tabSeparator);
             tabSeparator.addEventListener('click', function(event) {
-                tabList.toggleHidden();
-                if(tabList.hasSelected()){
+                tabList.toggleVisible();
+                //In case we just hid the list with the selected item, move the selection to the
+                //first list possible
+                if(tabList.hasSelected() && !tabList.visible){
                     tabList.unselectAll();
                     for(const tabList of lists){
                         if(tabList.length > 0 && tabList.visible){
@@ -156,6 +158,17 @@ function reRender(lists){
                         }
                     }
                 }
+                //In case this is the only visible list with items (there's no selected item)
+                //pre-select the first item on the list
+                if(tabList.visible){
+                    for (const list of lists) {
+                        if(list.hasSelected()){
+                            return;
+                        }
+                    }
+                    tabList.selectFirst();
+                }
+
             });
             for (let tab of tabList.tabs) {
                 currentItems.appendChild(tab.render(tabList.visible));

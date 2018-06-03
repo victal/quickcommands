@@ -62,7 +62,7 @@ class TabList {
     get length() {
         return this.tabs.length;
     }
-    toggleHidden() {
+    toggleVisible() {
         this.visible = !this.visible;
         let chevron = this.separator.querySelector('.chevron');
         chevron.textContent = this.visible ? '⧼' : '⧽';
