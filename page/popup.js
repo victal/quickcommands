@@ -150,25 +150,23 @@ function reRender(lists){
                 if(tabList.hasSelected()){
                     tabList.unselectAll();
                     for(const tabList of lists){
-                        if(tabList.length > 0 && !tabList.hidden){
+                        if(tabList.length > 0 && tabList.visible){
                             tabList.selectFirst();
                             return;
                         }
                     }
                 }
-            })
+            });
             for (let tab of tabList.tabs) {
-                currentItems.appendChild(tab.render());
+                currentItems.appendChild(tab.render(tabList.visible));
             }
         }
     }
     entryList.appendChild(currentItems);
-    if(lists.length > 0){
-        for(const tabList of lists){
-            if(tabList.length > 0  && !tabList.hidden){
-                tabList.selectFirst();
-                return;
-            }
+    for(const tabList of lists){
+        if(tabList.length > 0  && tabList.visible){
+            tabList.selectFirst();
+            return;
         }
     }
 }
@@ -229,6 +227,36 @@ function updateAll(lists, filterText){
     });
 }
 
+function getVisibility(data, listName){
+    const defaultVisibility = true;
+    if(typeof data === 'undefined') return defaultVisibility;
+    if(typeof data[listName] === 'undefined') return defaultVisibility;
+    return data[listName];
+}
+
+async function getListVisibility() {
+    const data = await browser.storage.local.get('visibility');
+    return Object.assign({}, data.visibility);
+}
+
+function setupUnloadListener(lists) {
+    window.addEventListener("beforeunload", (e) => {
+        const listVisibility = {};
+        for (const list of lists) {
+            listVisibility[list.title] = list.visible;
+        }
+        const sending = browser.runtime.sendMessage({
+            //We send width - 1 due to the ff bug mentioned above
+            popupWindow: {
+                height: window.outerHeight,
+                width: window.outerWidth - 1,
+                visibility: listVisibility
+            }
+        });
+        sending.then((message) => console.info(message.response), (error) => console.error(error));
+    });
+}
+
 function startUp() {
     // Fix for Fx57 bug where bundled page loaded using
     // browser.windows.create won't show contents unless resized.
@@ -237,15 +265,17 @@ function startUp() {
         browser.windows.update(win.id, {width:win.width+1});
     });
     let url = browser.extension.getURL("page/popup.html");
-    updateTheme().then(() => {
+    updateTheme().then(getListVisibility).then((data) => {
         return browser.history.deleteUrl({url: url}).then(() => {
             console.debug("Extension page removed from history");
+            console.log(data);
             let lists = [
-                new TabList("Tabs", updateTabs),
-                new TabList("History", updateHistoryTabs),
-                new TabList("Bookmarks", updateBookmarks)
+                new TabList("Tabs", updateTabs, getVisibility(data, "Tabs")),
+                new TabList("History", updateHistoryTabs, getVisibility(data, "History")),
+                new TabList("Bookmarks", updateBookmarks, getVisibility(data, "Bookmarks"))
             ];
             setupInputFilter(lists);
+            setupUnloadListener(lists);
             updateAll(lists, null);
         });
     });
@@ -256,14 +286,4 @@ document.addEventListener("DOMContentLoaded", startUp);
 // Save window size when closed
 // Uses runtime.sendMessage to avoid race conditions with async
 // functions that deal with browser.storage
-window.addEventListener("beforeunload", (e) => {
-    const sending = browser.runtime.sendMessage({
-        //We send width - 1 due to the ff bug mentioned above
-        popupWindow: {
-            height: window.outerHeight,
-            width: window.outerWidth - 1
-        }
-    });
-    sending.then((message) => console.info(message.response), (error) => console.error(error));
-});
 

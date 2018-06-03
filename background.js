@@ -48,8 +48,9 @@ async function updatePopupData(request, sender, sendResponse) {
             id: winData.id,
             visible: false,
             width: request.popupWindow.width,
-            height: request.popupWindow.height
-        }
+            height: request.popupWindow.height,
+        },
+        visibility: request.popupWindow.visibility
     });
     sendResponse({response: `Successfully saved window dimensions.`});
 }

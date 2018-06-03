@@ -65,7 +65,7 @@ class TabList {
     toggleHidden() {
         this.visible = !this.visible;
         let chevron = this.separator.querySelector('.chevron');
-        chevron.textContent = this.visible ? '⧽': '⧼';
+        chevron.textContent = this.visible ? '⧼' : '⧽';
         if(this.visible){
             for (const tab of this.tabs) {
                 tab.show();
@@ -85,10 +85,10 @@ class TabList {
         separatorName.textContent = this.title;
         separatorName.classList.add('pull-left');
         let chevron = document.createElement('strong');
-        chevron.textContent = this.visible ? '⧽': '⧼';
-        chevron.classList.add('pull-right')
-        chevron.classList.add('chevron')
-        chevron.classList.add('count')
+        chevron.textContent = this.visible ? '⧼' : '⧽' ;
+        chevron.classList.add('pull-right');
+        chevron.classList.add('chevron');
+        chevron.classList.add('count');
         chevron.setAttribute('style', 'transform: rotate(90deg);');
 
         let count = document.createElement('span');
@@ -110,13 +110,16 @@ class Tab {
         this.selected = false;
     }
 
-    render(){
+    render(visible){
         let tabElement = document.createElement("li");
         tabElement.setAttribute("id", this.tabID);
         tabElement.addEventListener("click", () => {
             this.open()
         });
         tabElement.textContent = this.title;
+        if(!visible){
+            tabElement.classList.add('hidden');
+        }
         return tabElement;
     }
 
@@ -158,7 +161,7 @@ class Link {
         this.selected = false;
     }
 
-    render(){
+    render(visible){
         let tabElement = document.createElement("li");
         let title = document.createElement('span');
         title.textContent = this.title;
@@ -175,6 +178,9 @@ class Link {
         tabElement.addEventListener("click", () => {
             this.open()
         });
+        if(!visible){
+            tabElement.classList.add('hidden');
+        }
         return tabElement;
     }
 
