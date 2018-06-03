@@ -1,10 +1,10 @@
 class TabList {
-    constructor(title, search_fn){
+    constructor(title, search_fn, visible){
         this.title = title;
         this.search = search_fn;
         this.tabs = [];
         this.selected = null;
-        this.hidden = false;
+        this.visible = visible;
     }
     update(filterText) {
         return this.search(filterText).then((results) => {
@@ -14,7 +14,7 @@ class TabList {
         })
     }
     selectFirst() {
-        if(this.tabs.length > 0){
+        if(this.tabs.length > 0 && this.visible){
             this.tabs[0].select();
             this.selected = this.tabs[0];
             return true;
@@ -22,7 +22,7 @@ class TabList {
         return false;
     }
     selectLast(){
-        if(this.tabs.length > 0) {
+        if(this.tabs.length > 0 && this.visible) {
             let ind = this.tabs.length - 1;
             this.tabs[ind].select();
             this.selected = this.tabs[ind];
@@ -63,17 +63,17 @@ class TabList {
         return this.tabs.length;
     }
     toggleHidden() {
-        this.hidden = !this.hidden;
+        this.visible = !this.visible;
         let chevron = this.separator.querySelector('.chevron');
-        chevron.textContent = this.hidden ? '⧽': '⧼';
-        if(this.hidden){
+        chevron.textContent = this.visible ? '⧽': '⧼';
+        if(this.visible){
             for (const tab of this.tabs) {
-                tab.hide();
+                tab.show();
             }
         }
         else {
             for (const tab of this.tabs) {
-                tab.show();
+                tab.hide();
             }
         }
     }
@@ -85,7 +85,7 @@ class TabList {
         separatorName.textContent = this.title;
         separatorName.classList.add('pull-left');
         let chevron = document.createElement('strong');
-        chevron.textContent = this.hidden ? '⧽': '⧼';
+        chevron.textContent = this.visible ? '⧽': '⧼';
         chevron.classList.add('pull-right')
         chevron.classList.add('chevron')
         chevron.classList.add('count')
