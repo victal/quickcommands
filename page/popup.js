@@ -155,6 +155,18 @@ function reRender(lists){
             tabSeparator.appendChild(separatorName);
             tabSeparator.appendChild(count);
             currentItems.appendChild(tabSeparator);
+            tabSeparator.addEventListener('click', function(event) {
+                tabList.toggleHidden();
+                if(tabList.hasSelected()){
+                    tabList.unselectAll();
+                    for(const tabList of lists){
+                        if(tabList.length > 0 && !tabList.hidden){
+                            tabList.selectFirst();
+                            return;
+                        }
+                    }
+                }
+            })
             for (let tab of tabList.tabs) {
                 currentItems.appendChild(tab.render());
             }
@@ -163,7 +175,7 @@ function reRender(lists){
     entryList.appendChild(currentItems);
     if(lists.length > 0){
         for(const tabList of lists){
-            if(tabList.length > 0 ){
+            if(tabList.length > 0  && !tabList.hidden){
                 tabList.selectFirst();
                 return;
             }

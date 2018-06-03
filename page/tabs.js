@@ -4,6 +4,7 @@ class TabList {
         this.search = search_fn;
         this.tabs = [];
         this.selected = null;
+        this.hidden = false;
     }
     update(filterText) {
         return this.search(filterText).then((results) => {
@@ -61,6 +62,19 @@ class TabList {
     get length() {
         return this.tabs.length;
     }
+    toggleHidden() {
+        this.hidden = !this.hidden;
+        if(this.hidden){
+            for (const tab of this.tabs) {
+                tab.hide();
+            }
+        }
+        else {
+            for (const tab of this.tabs) {
+                tab.show();
+            }
+        }
+    }
 }
 
 class Tab {
@@ -78,6 +92,16 @@ class Tab {
         });
         tabElement.textContent = this.title;
         return tabElement;
+    }
+
+    hide() {
+        let element = document.getElementById(this.tabID);
+        element.classList.add('hidden');
+    }
+
+    show() {
+        let element = document.getElementById(this.tabID);
+        element.classList.remove('hidden');
     }
 
     select(){
@@ -149,4 +173,15 @@ class Link {
 
         });
     }
+
+    hide() {
+        let element = document.getElementById(this.id);
+        element.classList.add('hidden');
+    }
+
+    show() {
+        let element = document.getElementById(this.id);
+        element.classList.remove('hidden');
+    }
+
 }

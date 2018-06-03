@@ -28,7 +28,7 @@ async function openPopup() {
         //Close window when focus is lost
         browser.windows.onFocusChanged.addListener(function(id) {
             if(id !== winData.id) {
-                browser.windows.remove(winData.id);
+                //browser.windows.remove(winData.id);
             }
         });
     });

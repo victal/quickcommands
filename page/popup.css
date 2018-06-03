@@ -94,3 +94,7 @@ li.selected, .selected .tab-content {
 .tab-url, li.separator {
     color: var(--accent-text-color);
 }
+
+.hidden {
+    display: none;
+}
