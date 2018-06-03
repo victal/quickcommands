@@ -64,6 +64,8 @@ class TabList {
     }
     toggleHidden() {
         this.hidden = !this.hidden;
+        let chevron = this.separator.querySelector('.chevron');
+        chevron.textContent = this.hidden ? '⧽': '⧼';
         if(this.hidden){
             for (const tab of this.tabs) {
                 tab.hide();
@@ -74,6 +76,30 @@ class TabList {
                 tab.show();
             }
         }
+    }
+
+    renderSeparator() {
+        this.separator = document.createElement("li");
+        this.separator.classList.add("separator");
+        let separatorName = document.createElement('span');
+        separatorName.textContent = this.title;
+        separatorName.classList.add('pull-left');
+        let chevron = document.createElement('strong');
+        chevron.textContent = this.hidden ? '⧽': '⧼';
+        chevron.classList.add('pull-right')
+        chevron.classList.add('chevron')
+        chevron.classList.add('count')
+        chevron.setAttribute('style', 'transform: rotate(90deg);');
+
+        let count = document.createElement('span');
+        count.textContent = this.length;
+        count.classList.add('count');
+        count.classList.add('pull-right');
+
+        this.separator.appendChild(separatorName);
+        this.separator.appendChild(chevron);
+        this.separator.appendChild(count);
+        return this.separator;
     }
 }
 

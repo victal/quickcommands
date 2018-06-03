@@ -143,17 +143,7 @@ function reRender(lists){
     let currentItems = document.createDocumentFragment();
     for (const tabList of lists) {
         if(tabList.length > 0){
-            let tabSeparator = document.createElement("li");
-            tabSeparator.classList.add("separator");
-            let separatorName = document.createElement('span');
-            separatorName.textContent = tabList.title;
-            separatorName.classList.add('pull-left');
-            let count = document.createElement('span');
-            count.textContent = tabList.length;
-            count.classList.add('count');
-            count.classList.add('pull-right');
-            tabSeparator.appendChild(separatorName);
-            tabSeparator.appendChild(count);
+            let tabSeparator = tabList.renderSeparator();
             currentItems.appendChild(tabSeparator);
             tabSeparator.addEventListener('click', function(event) {
                 tabList.toggleHidden();
