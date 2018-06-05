@@ -7,11 +7,11 @@ async function closeUp() {
     })
 }
 
-function updateTabs(filterText) {
+async function updateTabs(filterText) {
     let filterRegex = new RegExp(".*" + filterText + ".*", "i");
     return browser.tabs.query({
         currentWindow: false
-    }).then((tabs) => {
+    }).then(async (tabs) => {
         let currentTabs = [];
         for (let tab of tabs) {
             if (filterText) {
@@ -22,15 +22,16 @@ function updateTabs(filterText) {
             let tabElement = new Tab(tab.id, tab.title);
             currentTabs.push(tabElement);
         }
-        return currentTabs;
+        const limit = await getLimit();
+        return currentTabs.slice(0, limit);
     });
 }
 
-function updateBookmarks(filterText) {
+async function updateBookmarks(filterText) {
     filterText = filterText ? filterText : "";
     return browser.bookmarks.search({
         query: filterText
-    }).then((items) => {
+    }).then(async (items) => {
         let tabs = [];
         let usedUrls = [];
         for(let item of items){
@@ -45,16 +46,17 @@ function updateBookmarks(filterText) {
                 }
             }
         }
-        return tabs;
+        const limit = await getLimit();
+        return tabs.slice(0, limit);
     });
 }
 
-function updateHistoryTabs(filterText) {
+async function updateHistoryTabs(filterText) {
     filterText = filterText ? filterText : "";
     return browser.history.search({
         text: filterText,
         startTime: 0,
-        maxResults: 100
+        maxResults: await getLimit()
     }).then((items) => {
         let usedUrls = [];
         let historyTabs = [];
@@ -227,7 +229,7 @@ function updateAll(lists, filterText){
     });
 }
 
-function startUp() {
+async function startUp() {
     // Fix for Fx57 bug where bundled page loaded using
     // browser.windows.create won't show contents unless resized.
     // See https://bugzilla.mozilla.org/show_bug.cgi?id=1402110
@@ -235,13 +237,13 @@ function startUp() {
         browser.windows.update(win.id, {width:win.width+1});
     });
     let url = browser.extension.getURL("page/popup.html");
-    updateTheme().then(() => {
+    updateTheme().then(async () => {
         return browser.history.deleteUrl({url: url}).then(() => {
             console.debug("Extension page removed from history");
             let lists = [
-                new TabList("Tabs", updateTabs),
-                new TabList("History", updateHistoryTabs),
-                new TabList("Bookmarks", updateBookmarks)
+              new TabList("Tabs", updateTabs),
+              new TabList("History", updateHistoryTabs),
+              new TabList("Bookmarks", updateBookmarks)
             ];
             setupInputFilter(lists);
             updateAll(lists, null);
