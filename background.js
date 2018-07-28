@@ -16,6 +16,10 @@ async function openPopup() {
         width: winData.width || 599,
         height: winData.height || 500
     }).then(async function(winData){
+        await browser.windows.update(winData.id, {
+            left: (screen.width - winData.width) / 2, 
+            top: (screen.height - windata.height) / 2
+        });
         // Update the popup data to reflect its visibility status and window ID
         await browser.storage.local.set({
             popup: {
