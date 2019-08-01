@@ -27,7 +27,12 @@ async function openPopup() {
         });
         //Close window when focus is lost
         browser.windows.onFocusChanged.addListener(function(id) {
-            if(id !== winData.id) {
+            /**
+             * windows.WINDOW_ID_NONE = -1: The windowId value that represents the absence of a chrome browser window.
+             * windows.WINDOW_ID_CURRENT = -2: The windowId value that represents the <a href='windows#current-window'>current window</a>.
+             * More info: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/windows#Properties
+             */
+            if(id >= 0 && id !== winData.id) {
                 browser.windows.remove(winData.id);
             }
         });
