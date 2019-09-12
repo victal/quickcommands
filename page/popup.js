@@ -230,14 +230,8 @@ function updateAll(lists, filterText){
 }
 
 async function startUp() {
-    // Fix for Fx57 bug where bundled page loaded using
-    // browser.windows.create won't show contents unless resized.
-    // See https://bugzilla.mozilla.org/show_bug.cgi?id=1402110
-    browser.windows.getCurrent((win) => {
-        browser.windows.update(win.id, {width:win.width+1});
-    });
-    let url = browser.extension.getURL("page/popup.html");
-    updateTheme().then(async () => {
+    const url = browser.extension.getURL("page/popup.html");
+    updateTheme().then(() => {
         return browser.history.deleteUrl({url: url}).then(() => {
             console.debug("Extension page removed from history");
             let lists = [
@@ -246,24 +240,34 @@ async function startUp() {
               new TabList("Bookmarks", updateBookmarks)
             ];
             setupInputFilter(lists);
-            updateAll(lists, null);
+            return updateAll(lists, null).then(() => {
+                return browser.windows.getCurrent((win) => {
+                    browser.windows.onFocusChanged.addListener(removePopupOnFocusChange(win.id))
+                });
+            });
         });
     });
 }
-
 document.addEventListener("DOMContentLoaded", startUp);
+
+
+const removePopupOnFocusChange = currentId => focusedId => {
+    if(currentId !== focusedId) {
+        browser.windows.onFocusChanged.removeListener(removePopupOnFocusChange);
+        browser.windows.remove(currentId);
+    }
+}
 
 // Save window size when closed
 // Uses runtime.sendMessage to avoid race conditions with async
 // functions that deal with browser.storage
-window.addEventListener("beforeunload", (e) => {
-    const sending = browser.runtime.sendMessage({
+window.addEventListener("beforeunload", e => {
+    browser.runtime.sendMessage({
         //We send width - 1 due to the ff bug mentioned above
         popupWindow: {
             height: window.outerHeight,
             width: window.outerWidth - 1
         }
-    });
-    sending.then((message) => console.info(message.response), (error) => console.error(error));
+    }).then(message => console.info(message.response), error => console.error(error));
 });
 

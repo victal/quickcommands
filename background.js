@@ -25,14 +25,9 @@ async function openPopup() {
                 height: winData.height
             }
         });
-        //Close window when focus is lost
-        browser.windows.onFocusChanged.addListener(function(id) {
-            if(id !== winData.id) {
-                browser.windows.remove(winData.id);
-            }
-        });
     });
     //Deletion from history is done on the page Javascript to ensure loading from history doesn't include it
+    //Window focus change listener is added in the page Javascript to ensure the listener does not trigger until the page is fully loaded
 }
 
 browser.commands.onCommand.addListener((command) => {
