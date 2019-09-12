@@ -263,10 +263,9 @@ const removePopupOnFocusChange = currentId => focusedId => {
 // functions that deal with browser.storage
 window.addEventListener("beforeunload", e => {
     browser.runtime.sendMessage({
-        //We send width - 1 due to the ff bug mentioned above
         popupWindow: {
             height: window.outerHeight,
-            width: window.outerWidth - 1
+            width: window.outerWidth
         }
     }).then(message => console.info(message.response), error => console.error(error));
 });
