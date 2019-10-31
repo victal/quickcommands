@@ -1,4 +1,4 @@
-async function getPopupData() {
+const getPopupData = () => {
     const data = await browser.storage.local.get('popup');
     return Object.assign({}, data.popup);
 }
