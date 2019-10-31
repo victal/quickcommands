@@ -4,5 +4,5 @@
 web-ext-artifacts/
 #Temporary assets
 *.png
-
+*.swp
 node_modules/
