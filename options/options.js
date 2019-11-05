@@ -1,3 +1,5 @@
+/* global getLimit */
+
 const commandName = 'quick-commands'
 const themes = {
   default: {
@@ -21,7 +23,7 @@ const themes = {
 let selectedTheme = themes.default
 
 function commandUpdateSupported () {
-  return browser.commands.hasOwnProperty('update')
+  return Object.prototype.hasOwnProperty.call(browser.commands, 'update')
 }
 
 function getTheme (themeName) {
@@ -42,9 +44,9 @@ function save (event) {
   const theme = getTheme(themeName)
   browser.storage.sync.set({
     theme: theme,
-    themeName: themeName
+    themeName: themeName,
+    limit: getLimitValue()
   })
-  setLimit(getLimitValue())
   if (commandUpdateSupported()) {
     updateShortcut()
   }
@@ -92,10 +94,10 @@ async function restoreOptions () {
     document.getElementById('custom').style.display = 'block'
   }
   doUpdatePreview(theme)
-  updateLimitUI()
+  await updateLimitUI()
 
   if (commandUpdateSupported()) {
-    updateShortcutUI()
+    await updateShortcutUI()
   }
 }
 
@@ -160,5 +162,5 @@ function start () {
     input.addEventListener('change', updatePreviewProperty)
   }
   restoreOptions()
-};
+}
 document.addEventListener('DOMContentLoaded', start)

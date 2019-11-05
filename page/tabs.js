@@ -1,3 +1,14 @@
+/* exported TabList,Tab,Link */
+function getFirstWindow () {
+  return browser.windows.getAll().then((windows) => {
+    return browser.windows.get(Math.min.apply(Math, windows.filter((w) => {
+      return w.type === 'normal'
+    }).map((w) => {
+      return w.id
+    })))
+  })
+}
+
 class TabList {
   constructor (title, search_fn) {
     this.title = title
@@ -72,10 +83,11 @@ class TabList {
 }
 
 class Tab {
-  constructor (tabID, title) {
+  constructor (tabID, title, onOpen) {
     this.tabID = tabID
     this.title = title
     this.selected = false
+    this.onOpen = onOpen
   }
 
   render () {
@@ -101,19 +113,19 @@ class Tab {
   }
 
   open () {
-    browser.tabs.update(this.tabID, {
+    return browser.tabs.update(this.tabID, {
       active: true
-    })
-    closeUp()
+    }).then(this.onOpen)
   }
 }
 
 class Link {
-  constructor (url, title, id) {
+  constructor (url, title, id, onOpen) {
     this.url = url
     this.title = title
     this.id = id
     this.selected = false
+    this.onOpen = onOpen
   }
 
   render () {
@@ -149,11 +161,10 @@ class Link {
   }
 
   open () {
-    getFirstWindow().then((w) => {
-      browser.tabs.create({ url: this.url, windowId: w.id }).then(() => {
-        browser.windows.update(w.id, { focused: true })
-        closeUp()
-      })
-    })
+    getFirstWindow().then((w) => 
+      browser.tabs.create({ url: this.url, windowId: w.id })
+        .then(() => browser.windows.update(w.id, { focused: true }))
+        .then(this.onOpen)
+    )
   }
 }

@@ -1,41 +1,35 @@
-async function getPopupData () {
+const getPopupData = async () => {
   const data = await browser.storage.local.get('popup')
   return Object.assign({}, data.popup)
 }
 
-async function openPopup () {
+const openPopup = async () => {
   // Prevent the popup from opening multiple times
-  const winData = await getPopupData()
-  if (winData.visible) return
-  console.info('Quick Commands opening with data: ', winData)
+  const popupData = await getPopupData()
+  if (popupData.visible) return
+  console.info('Quick Commands opening with data: ', popupData)
 
   const url = browser.extension.getURL('page/popup.html')
-  browser.windows.create({
+  const winData = await browser.windows.create({
     type: 'detached_panel',
     url: url,
-    width: winData.width || 599,
-    height: winData.height || 500
-  }).then(async function (winData) {
-    // Update the popup data to reflect its visibility status and window ID
-    await browser.storage.local.set({
-      popup: {
-        id: winData.id,
-        visible: true,
-        width: winData.width,
-        height: winData.height
-      }
-    })
+    width: popupData.width || 599,
+    height: popupData.height || 500
+  })
+  // Update the popup data to reflect its visibility status and window ID
+  await browser.storage.local.set({
+    popup: {
+      id: winData.id,
+      visible: true,
+      width: winData.width,
+      height: winData.height
+    }
   })
   // Deletion from history is done on the page Javascript to ensure loading from history doesn't include it
   // Window focus change listener is added in the page Javascript to ensure the listener does not trigger until the page is fully loaded
 }
 
-browser.commands.onCommand.addListener((command) => {
-  console.log('onCommand event received for message: ', command)
-  openPopup()
-})
-
-async function updatePopupData (request, sender, sendResponse) {
+const updatePopupData = async (request, sender, sendResponse) => {
   console.debug('Saving window dimensions:', request.popupWindow)
   const winData = await getPopupData()
   await browser.storage.local.set({
@@ -48,6 +42,11 @@ async function updatePopupData (request, sender, sendResponse) {
   })
   sendResponse({ response: 'Successfully saved window dimensions.' })
 }
+
+browser.commands.onCommand.addListener((command) => {
+  console.log('onCommand event received for message: ', command)
+  return openPopup()
+})
 
 browser.browserAction.onClicked.addListener(openPopup)
 browser.runtime.onMessage.addListener(updatePopupData)

@@ -1,3 +1,4 @@
+/* global Tab,getLimit,Link,updateTheme,TabList*/
 async function closeUp () {
   const url = browser.extension.getURL('page/popup.html')
   await browser.history.deleteUrl({ url: url + '#' })
@@ -19,7 +20,7 @@ async function updateTabs (filterText) {
           continue
         }
       }
-      const tabElement = new Tab(tab.id, tab.title)
+      const tabElement = new Tab(tab.id, tab.title, closeUp)
       currentTabs.push(tabElement)
     }
     const limit = await getLimit()
@@ -41,7 +42,7 @@ async function updateBookmarks (filterText) {
         const cleanUrl = item.url.replace(url.hash, '').replace(url.search, '')
         const allowedUrl = !item.url.toLowerCase().startsWith('place') && !item.url.toLowerCase().startsWith('about')
         if (allowedUrl && usedUrls.indexOf(cleanUrl) === -1) {
-          tabs.push(new Link(item.url, item.title, 'bookmark' + item.id))
+          tabs.push(new Link(item.url, item.title, 'bookmark' + item.id, closeUp))
           usedUrls.push(cleanUrl)
         }
       }
@@ -118,22 +119,13 @@ function setupInputFilter (lists) {
     }
   })
   searchInput.focus()
-  searchInput.addEventListener('blur', (ev) => {
+  searchInput.addEventListener('blur', () => {
     setTimeout(function () {
       searchInput.focus()
     }, 10)
   })
 }
 
-function getFirstWindow () {
-  return browser.windows.getAll().then((windows) => {
-    return browser.windows.get(Math.min.apply(Math, windows.filter((w) => {
-      return w.type === 'normal'
-    }).map((w) => {
-      return w.id
-    })))
-  })
-}
 
 function reRender (lists) {
   const entryList = document.getElementById('entryList')
@@ -259,7 +251,7 @@ const removePopupOnFocusChange = currentId => focusedId => {
 // Save window size when closed
 // Uses runtime.sendMessage to avoid race conditions with async
 // functions that deal with browser.storage
-window.addEventListener('beforeunload', e => {
+window.addEventListener('beforeunload', () => {
   browser.runtime.sendMessage({
     popupWindow: {
       height: window.outerHeight,

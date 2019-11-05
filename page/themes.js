@@ -1,3 +1,4 @@
+/* exported updateTheme */
 // TODO: Get rid of this
 const defaultTheme = {
   'main-bg-color': '#ececec',

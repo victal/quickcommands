@@ -1,12 +1,11 @@
 module.exports = {
   env: {
     browser: true,
-    commonjs: true,
     es6: true,
     webextensions: true
   },
   extends: [
-    'standard'
+    'eslint:recommended'
   ],
   globals: {
     Atomics: 'readonly',
