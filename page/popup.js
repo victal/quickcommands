@@ -1,5 +1,5 @@
 /* global Tab,getLimit,Link,updateTheme,TabList*/
-async function closeUp () {
+const closeUp = async () => {
   const url = browser.extension.getURL('page/popup.html')
   await browser.history.deleteUrl({ url: url + '#' })
   const winId = browser.windows.WINDOW_ID_CURRENT
@@ -8,7 +8,7 @@ async function closeUp () {
   })
 }
 
-async function updateTabs (filterText) {
+const updateTabs = (filterText) => {
   const filterRegex = new RegExp('.*' + filterText + '.*', 'i')
   return browser.tabs.query({
     currentWindow: false
@@ -28,13 +28,14 @@ async function updateTabs (filterText) {
   })
 }
 
-async function updateBookmarks (filterText) {
+const updateBookmarks = (filterText) => {
   filterText = filterText || ''
   return browser.bookmarks.search({
     query: filterText
   }).then(async (items) => {
     const tabs = []
     const usedUrls = []
+    const limit = await getLimit()
     for (const item of items) {
       if (item.type === 'bookmark' && item.title.trim().length > 0) {
         // Limit bookmarks to http.* because of limitations on what we can open from an extension
@@ -46,13 +47,15 @@ async function updateBookmarks (filterText) {
           usedUrls.push(cleanUrl)
         }
       }
+      if (tabs.length === limit) {
+        return tabs
+      }
     }
-    const limit = await getLimit()
-    return tabs.slice(0, limit)
+    return tabs
   })
 }
 
-async function updateHistoryTabs (filterText) {
+const updateHistoryTabs = async (filterText) => {
   filterText = filterText || ''
   return browser.history.search({
     text: filterText,
@@ -76,7 +79,7 @@ async function updateHistoryTabs (filterText) {
   })
 }
 
-function setupInputFilter (lists) {
+const setupInputFilter = (lists) => {
   const searchInput = document.getElementById('search')
   // Use keydown instead of keyup to prevent the cursor from moving
   searchInput.addEventListener('keydown', (event) => {
@@ -92,12 +95,12 @@ function setupInputFilter (lists) {
     case 'Enter':
       openSelectedTab(lists)
       break
+    case 'Escape':
+      closeUp()
+      break
     case 'ArrowLeft':
     case 'ArrowRight':
       // ignored
-      break
-    case 'Escape':
-      closeUp()
       break
     default:
       break
@@ -120,14 +123,14 @@ function setupInputFilter (lists) {
   })
   searchInput.focus()
   searchInput.addEventListener('blur', () => {
-    setTimeout(function () {
+    setTimeout(() => {
       searchInput.focus()
     }, 10)
   })
 }
 
 
-function reRender (lists) {
+const reRender = (lists) => {
   const entryList = document.getElementById('entryList')
   while (entryList.lastChild) {
     entryList.removeChild(entryList.lastChild)
@@ -164,7 +167,7 @@ function reRender (lists) {
   }
 }
 
-function openSelectedTab (lists) {
+const openSelectedTab = (lists) => {
   for (const tabList of lists) {
     if (tabList.hasSelected()) {
       tabList.selected.open()
@@ -172,7 +175,7 @@ function openSelectedTab (lists) {
   }
 }
 
-function selectNext (lists) {
+const selectNext = (lists) => {
   for (const tabList of lists) {
     if (tabList.hasSelected()) {
       const selected = tabList.selectNext()
@@ -190,7 +193,7 @@ function selectNext (lists) {
   }
 }
 
-function selectPrevious (lists) {
+const selectPrevious = (lists) => {
   for (const tabList of lists) {
     if (tabList.hasSelected()) {
       const selected = tabList.selectPrev()
@@ -208,19 +211,19 @@ function selectPrevious (lists) {
   }
 }
 
-function updateAll (lists, filterText) {
+const updateAll = (lists, filterText) => {
   let result = Promise.resolve()
   lists.forEach((l) => {
-    result = result.then(function () {
+    result = result.then(() => {
       return l.update(filterText)
     })
   })
-  return result.then(function () {
+  return result.then(() => {
     return reRender(lists)
   })
 }
 
-async function startUp () {
+const startUp = () => {
   const url = browser.extension.getURL('page/popup.html')
   updateTheme().then(() => {
     return browser.history.deleteUrl({ url }).then(() => {

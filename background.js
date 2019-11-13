@@ -9,8 +9,6 @@ const openPopup = async () => {
   if (popupData.visible) {
     return
   }
-  console.info('Quick Commands opening with data: ', popupData)
-
   const url = browser.extension.getURL('page/popup.html')
   const winData = await browser.windows.create({
     type: 'detached_panel',

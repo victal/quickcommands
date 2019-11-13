@@ -9,7 +9,7 @@ const defaultTheme = {
   'selected-text-color': '#ffffff'
 }
 
-function applyTheme (theme) {
+const applyTheme = (theme) => {
   const html = document.getElementsByTagName('html')[0]
   if (theme) {
     for (const prop of Object.keys(theme)) {
@@ -20,7 +20,7 @@ function applyTheme (theme) {
   }
 }
 
-function updateTheme () {
+const updateTheme = () => {
   return browser.storage.sync.get('theme').then((results) => {
     applyTheme(results.theme)
   }, () => applyTheme(defaultTheme))

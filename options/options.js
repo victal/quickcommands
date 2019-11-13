@@ -22,11 +22,11 @@ const themes = {
 
 let selectedTheme = themes.default
 
-function commandUpdateSupported () {
+const commandUpdateSupported = () => {
   return Object.prototype.hasOwnProperty.call(browser.commands, 'update')
 }
 
-function getTheme (themeName) {
+const getTheme = (themeName) => {
   if (themeName === 'custom') {
     const inputs = document.querySelectorAll('#custom  input')
     const theme = {}
@@ -38,7 +38,7 @@ function getTheme (themeName) {
   return themes[themeName]
 }
 
-function save (event) {
+const save = (event) => {
   event.preventDefault()
   const themeName = document.getElementById('theme').value
   const theme = getTheme(themeName)
@@ -53,7 +53,7 @@ function save (event) {
   return false
 }
 
-function toggleCustomColors (event) {
+const toggleCustomColors = (event) => {
   const theme = event.target.value
   if (theme === 'custom') {
     document.getElementById('custom').style.display = 'block'
@@ -70,18 +70,18 @@ function toggleCustomColors (event) {
   }
 }
 
-function doUpdatePreview (theme) {
+const doUpdatePreview = (theme) => {
   const preview = document.getElementById('preview')
   for (const key of Object.keys(theme)) {
     preview.style.setProperty('--' + key, theme[key])
   }
 }
-function updateLivePreview (event) {
+const updateLivePreview = (event) => {
   const theme = getTheme(event.target.value)
   doUpdatePreview(theme)
 }
 
-async function restoreOptions () {
+const restoreOptions = async () => {
   const themeObj = await browser.storage.sync.get(['themeName', 'theme'])
   const themeName = themeObj.themeName || 'default'
   const theme = themeObj.theme || themes.default
@@ -101,13 +101,13 @@ async function restoreOptions () {
   }
 }
 
-function updatePreviewProperty (event) {
+const updatePreviewProperty = (event) => {
   const input = event.target
   const preview = document.getElementById('preview')
   preview.style.setProperty('--' + input.getAttribute('id'), input.value)
 }
 
-function updateShortcut () {
+const updateShortcut = () => {
   const activator = document.querySelector('#shortcut').value
   const modifiers = Array.from(document.querySelectorAll('#shortcutBlock input[name=\'modifier\'], #shortcutBlock input[name=\'shift\']'))
     .filter(f => f.checked)
@@ -121,7 +121,7 @@ function updateShortcut () {
   })
 }
 
-async function updateShortcutUI () {
+const updateShortcutUI = async () => {
   document.getElementById('shortcutBlock').style.display = 'block'
   const commands = await browser.commands.getAll()
   for (const command of commands) {
@@ -131,7 +131,7 @@ async function updateShortcutUI () {
   }
 }
 
-function populateShortcutSettings (shortcut) {
+const populateShortcutSettings = (shortcut) => {
   const keys = shortcut.split('+')
   const activator = keys.pop()
   keys.forEach(modifier => {
@@ -140,20 +140,20 @@ function populateShortcutSettings (shortcut) {
   document.querySelector('#shortcut').value = activator
 }
 
-function resetShortcut () {
+const resetShortcut = () => {
   browser.commands.reset(commandName)
   updateShortcutUI()
 }
 
-function getLimitValue () {
+const getLimitValue = () => {
   return document.querySelector('input[name=\'limit\']').valueAsNumber
 }
 
-async function updateLimitUI () {
+const updateLimitUI = async () => {
   document.querySelector('input[name=\'limit\']').value = await getLimit()
 }
 
-function start () {
+const start = () => {
   document.getElementById('form').addEventListener('submit', save)
   document.getElementById('theme').addEventListener('change', toggleCustomColors)
   document.getElementById('theme').addEventListener('change', updateLivePreview)
