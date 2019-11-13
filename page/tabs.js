@@ -1,5 +1,5 @@
 /* exported TabList,Tab,Link */
-function getFirstWindow () {
+const getFirstWindow = () => {
   return browser.windows.getAll().then((windows) => {
     return browser.windows.get(Math.min.apply(Math, windows.filter((w) => {
       return w.type === 'normal'
@@ -10,9 +10,9 @@ function getFirstWindow () {
 }
 
 class TabList {
-  constructor (title, search_fn) {
+  constructor (title, search) {
     this.title = title
-    this.search = search_fn
+    this.search = search
     this.tabs = []
     this.selected = null
   }
@@ -67,11 +67,11 @@ class TabList {
   }
 
   hasSelected () {
-    return this.selected != null
+    return this.selected !== null
   }
 
   unselectAll () {
-    if (this.selected != null) {
+    if (this.selected !== null) {
       this.selected.unselect()
       this.selected = null
     }
@@ -161,7 +161,7 @@ class Link {
   }
 
   open () {
-    getFirstWindow().then((w) => 
+    getFirstWindow().then((w) =>
       browser.tabs.create({ url: this.url, windowId: w.id })
         .then(() => browser.windows.update(w.id, { focused: true }))
         .then(this.onOpen)

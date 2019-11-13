@@ -30,7 +30,7 @@ function getTheme (themeName) {
   if (themeName === 'custom') {
     const inputs = document.querySelectorAll('#custom  input')
     const theme = {}
-    for (var input of inputs) {
+    for (let input of inputs) {
       theme[input.getAttribute('id')] = input.value
     }
     return theme
@@ -43,8 +43,8 @@ function save (event) {
   const themeName = document.getElementById('theme').value
   const theme = getTheme(themeName)
   browser.storage.sync.set({
-    theme: theme,
-    themeName: themeName,
+    theme,
+    themeName,
     limit: getLimitValue()
   })
   if (commandUpdateSupported()) {
@@ -59,7 +59,7 @@ function toggleCustomColors (event) {
     document.getElementById('custom').style.display = 'block'
     if (selectedTheme) {
       const inputs = document.querySelectorAll('#custom input')
-      for (var input of inputs) {
+      for (let input of inputs) {
         input.value = selectedTheme[input.getAttribute('id')]
       }
       selectedTheme = null
@@ -88,7 +88,7 @@ async function restoreOptions () {
   document.querySelector('#theme').value = themeName
   if (themeName === 'custom') {
     const inputs = document.querySelectorAll('#custom  input')
-    for (var input of inputs) {
+    for (let input of inputs) {
       input.value = theme[input.getAttribute('id')]
     }
     document.getElementById('custom').style.display = 'block'

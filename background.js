@@ -6,13 +6,15 @@ const getPopupData = async () => {
 const openPopup = async () => {
   // Prevent the popup from opening multiple times
   const popupData = await getPopupData()
-  if (popupData.visible) return
+  if (popupData.visible) {
+    return
+  }
   console.info('Quick Commands opening with data: ', popupData)
 
   const url = browser.extension.getURL('page/popup.html')
   const winData = await browser.windows.create({
     type: 'detached_panel',
-    url: url,
+    url,
     width: popupData.width || 599,
     height: popupData.height || 500
   })

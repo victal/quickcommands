@@ -81,41 +81,41 @@ function setupInputFilter (lists) {
   // Use keydown instead of keyup to prevent the cursor from moving
   searchInput.addEventListener('keydown', (event) => {
     switch (event.key) {
-      case 'ArrowDown':
-        selectNext(lists)
-        event.preventDefault()
-        break
-      case 'ArrowUp':
-        selectPrevious(lists)
-        event.preventDefault()
-        break
-      case 'Enter':
-        openSelectedTab(lists)
-        break
-      case 'ArrowLeft':
-      case 'ArrowRight':
-        // ignored
-        break
-      case 'Escape':
-        closeUp()
-        break
-      default:
-        break
+    case 'ArrowDown':
+      selectNext(lists)
+      event.preventDefault()
+      break
+    case 'ArrowUp':
+      selectPrevious(lists)
+      event.preventDefault()
+      break
+    case 'Enter':
+      openSelectedTab(lists)
+      break
+    case 'ArrowLeft':
+    case 'ArrowRight':
+      // ignored
+      break
+    case 'Escape':
+      closeUp()
+      break
+    default:
+      break
     }
   })
   searchInput.addEventListener('keyup', (event) => {
     switch (event.key) {
-      case 'ArrowDown':
-      case 'ArrowUp':
-      case 'Enter':
-      case 'ArrowLeft':
-      case 'ArrowRight':
-      case 'Escape':
-        // ignored
-        break
-      default:
-        updateAll(lists, searchInput.value)
-        break
+    case 'ArrowDown':
+    case 'ArrowUp':
+    case 'Enter':
+    case 'ArrowLeft':
+    case 'ArrowRight':
+    case 'Escape':
+      // ignored
+      break
+    default:
+      updateAll(lists, searchInput.value)
+      break
     }
   })
   searchInput.focus()
@@ -223,7 +223,7 @@ function updateAll (lists, filterText) {
 async function startUp () {
   const url = browser.extension.getURL('page/popup.html')
   updateTheme().then(() => {
-    return browser.history.deleteUrl({ url: url }).then(() => {
+    return browser.history.deleteUrl({ url }).then(() => {
       console.debug('Extension page removed from history')
       const lists = [
         new TabList('Tabs', updateTabs),
