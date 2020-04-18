@@ -255,11 +255,11 @@ const removePopupOnFocusChange = currentId => focusedId => {
 // Save window size when closed
 // Uses runtime.sendMessage to avoid race conditions with async
 // functions that deal with browser.storage
-window.addEventListener('resize', () => {
-  return browser.runtime.sendMessage({
+window.addEventListener('beforeunload', () => {
+  browser.runtime.sendMessage({
     popupWindow: {
       height: window.outerHeight,
       width: window.outerWidth
     }
-  }).then(message => console.info(message.response)).catch(error => console.error(error))
+  }).then(message => console.info(message.response), error => console.error(error))
 })
