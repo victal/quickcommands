@@ -3,13 +3,16 @@ const getPopupData = async () => {
   return Object.assign({}, data.popup)
 }
 
-const openPopup = async () => {
+const openPopup = async (e) => {
+  console.log('OPEN POPUP', e)
+  const url = browser.extension.getURL('page/popup.html')
   // Prevent the popup from opening multiple times
-  const popupData = await getPopupData()
-  if (popupData.visible) {
+  const tabs = await browser.tabs.query({url})
+  if (tabs.length > 0) {
+    console.log({tabs})
     return
   }
-  const url = browser.extension.getURL('page/popup.html')
+  const popupData = await getPopupData()
   const winData = await browser.windows.create({
     type: 'detached_panel',
     url,
@@ -19,8 +22,7 @@ const openPopup = async () => {
   // Update the popup data to reflect its visibility status and window ID
   await browser.storage.local.set({
     popup: {
-      id: winData.id,
-      visible: true,
+      //id: winData.id,
       width: winData.width,
       height: winData.height
     }
@@ -31,29 +33,29 @@ const openPopup = async () => {
 
 const updatePopupData = async (request, sender, sendResponse) => {
   console.debug('Saving window dimensions:', request.popupWindow)
-  const winData = await getPopupData()
-  await browser.storage.local.set({
-    popup: {
-      id: winData.id,
-      visible: false,
-      width: request.popupWindow.width,
-      height: request.popupWindow.height
-    }
-  })
-  sendResponse({ response: 'Successfully saved window dimensions.' })
+  return
+  //await browser.storage.local.set({
+    //popup: {
+      //width: request.popupWindow.width,
+      //height: request.popupWindow.height
+    //}
+  //})
+  //sendResponse({ response: 'Successfully saved window dimensions.' })
 }
 
 browser.commands.onCommand.addListener((command) => {
   console.log('onCommand event received for message: ', command)
-  return openPopup()
+  return openPopup(command)
 })
 
-browser.browserAction.onClicked.addListener(openPopup)
+browser.browserAction.onClicked.addListener(command => {
+  console.log('browserAction.onClicked', command)
+  return openPopup(command)
+})
 browser.runtime.onMessage.addListener(updatePopupData)
 
 // Reset popup visibility in case firefox was forcibly closed
 getPopupData().then((data) => {
-  data.visible = false
   browser.storage.local.set({
     popup: data
   })

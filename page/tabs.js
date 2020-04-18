@@ -161,7 +161,7 @@ class Link {
   }
 
   open () {
-    getFirstWindow().then((w) =>
+    return getFirstWindow().then((w) =>
       browser.tabs.create({ url: this.url, windowId: w.id })
         .then(() => browser.windows.update(w.id, { focused: true }))
         .then(this.onOpen)

@@ -1,9 +1,10 @@
 /* global Tab,getLimit,Link,updateTheme,TabList*/
 const closeUp = async () => {
+  console.log('Closing up')
   const url = browser.extension.getURL('page/popup.html')
   await browser.history.deleteUrl({ url: url + '#' })
   const winId = browser.windows.WINDOW_ID_CURRENT
-  browser.windows.get(winId).then(async (winData) => {
+  return browser.windows.get(winId).then(async (winData) => {
     await browser.windows.remove(winData.id)
   })
 }
@@ -254,11 +255,11 @@ const removePopupOnFocusChange = currentId => focusedId => {
 // Save window size when closed
 // Uses runtime.sendMessage to avoid race conditions with async
 // functions that deal with browser.storage
-window.addEventListener('beforeunload', () => {
-  browser.runtime.sendMessage({
+window.addEventListener('resize', () => {
+  return browser.runtime.sendMessage({
     popupWindow: {
       height: window.outerHeight,
       width: window.outerWidth
     }
-  }).then(message => console.info(message.response), error => console.error(error))
+  }).then(message => console.info(message.response)).catch(error => console.error(error))
 })
