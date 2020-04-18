@@ -1,12 +1,8 @@
 /* global Tab,getLimit,Link,updateTheme,TabList*/
-const closeUp = async () => {
-  console.log('Closing up')
+const closePopup = async () => {
   const url = browser.extension.getURL('page/popup.html')
   await browser.history.deleteUrl({ url: url + '#' })
-  const winId = browser.windows.WINDOW_ID_CURRENT
-  return browser.windows.get(winId).then(async (winData) => {
-    await browser.windows.remove(winData.id)
-  })
+  window.close()
 }
 
 const updateTabs = (filterText) => {
@@ -21,7 +17,7 @@ const updateTabs = (filterText) => {
           continue
         }
       }
-      const tabElement = new Tab(tab.id, tab.title, closeUp)
+      const tabElement = new Tab(tab.id, tab.title, closePopup)
       currentTabs.push(tabElement)
     }
     const limit = await getLimit()
@@ -44,7 +40,7 @@ const updateBookmarks = (filterText) => {
         const cleanUrl = item.url.replace(url.hash, '').replace(url.search, '')
         const allowedUrl = !item.url.toLowerCase().startsWith('place') && !item.url.toLowerCase().startsWith('about')
         if (allowedUrl && usedUrls.indexOf(cleanUrl) === -1) {
-          tabs.push(new Link(item.url, item.title, 'bookmark' + item.id, closeUp))
+          tabs.push(new Link(item.url, item.title, 'bookmark' + item.id, closePopup))
           usedUrls.push(cleanUrl)
         }
       }
@@ -98,7 +94,7 @@ const setupInputFilter = (lists) => {
       event.preventDefault()
       break
     case 'Escape':
-      closeUp()
+      closePopup()
       break
     case 'ArrowLeft':
     case 'ArrowRight':
