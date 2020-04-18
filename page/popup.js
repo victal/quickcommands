@@ -95,6 +95,7 @@ const setupInputFilter = (lists) => {
       break
     case 'Enter':
       openSelectedTab(lists)
+      event.preventDefault()
       break
     case 'Escape':
       closeUp()
