@@ -4,6 +4,7 @@
   "description": "A Firefox webextension that tries to mimic Vivaldi's Quick commands window. Open with Alt-Shift-R",
   "main": "",
   "scripts": {
+    "dev": "web-ext run -f ${FIREFOX:-firefox}",
     "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,6 +25,7 @@
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "eslint-watch": "^6.0.1"
+    "eslint-watch": "^6.0.1",
+    "web-ext": "^4.1.0"
   }
 }
