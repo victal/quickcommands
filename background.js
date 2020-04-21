@@ -8,7 +8,6 @@ const openPopup = async () => {
   // Prevent the popup from opening multiple times
   const tabs = await browser.tabs.query({url})
   if (tabs.length > 0) {
-    console.log({tabs})
     return
   }
   const popupData = await getPopupData()
@@ -28,19 +27,8 @@ const updatePopupData = (request) => browser.storage.local.set({
     height: request.popupWindow.height
   }
 })
-
-
-browser.commands.onCommand.addListener((command) => {
-  console.log('onCommand event received for message: ', command)
-  return openPopup(command)
-})
-
-browser.browserAction.onClicked.addListener(openPopup)
 browser.runtime.onMessage.addListener(updatePopupData)
 
-// Reset popup visibility in case firefox was forcibly closed
-getPopupData().then((data) => {
-  browser.storage.local.set({
-    popup: data
-  })
-})
+
+browser.commands.onCommand.addListener(openPopup)
+browser.browserAction.onClicked.addListener(openPopup)
