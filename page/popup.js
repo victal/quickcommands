@@ -10,6 +10,8 @@ const updateTabs = (filterText) => {
   return browser.tabs.query({
     currentWindow: false
   }).then(async (tabs) => {
+    // TODO: Try to replace this with {url, title} on query
+    // Can't do that with url, only with title
     const currentTabs = []
     for (const tab of tabs) {
       if (filterText) {
@@ -234,7 +236,7 @@ const startUp = () => {
       setupInputFilter(lists)
       return updateAll(lists, null).then(() => {
         return browser.windows.getCurrent((win) => {
-          browser.windows.onFocusChanged.addListener(removePopupOnFocusChange(win.id))
+          //browser.windows.onFocusChanged.addListener(removePopupOnFocusChange(win.id))
         })
       })
     })
