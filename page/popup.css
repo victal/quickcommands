@@ -71,13 +71,14 @@ li > span:first-child {
 }
 
 li.separator > span:first-child {
-		padding-left: 0;
+    padding-left: 0;
 }
 
 li > .icon:first-child {
-		width: 2em;
-		text-align: center;
-		margin: 0;
+    padding-left: 0;
+    width: 2em;
+    text-align: center;
+    margin: 0;
 }
 
 li.selected, .selected .tab-content {
