@@ -1,10 +1,10 @@
 const fixedCommands = {
-  //'Mute / Unmute Current Tab': () => browser.tabs.query, //save visible tab on start
+  //'Mute / Unmute Current Tab': () => browser.tabs.query, //TODO: save visible tab on start
   'Mute All Tabs': () => browser.tabs.query({audible: true, muted: false})
     .then(tabs => Promise.all(
       tabs.map(t => browser.tabs.update(t.id, {muted: true}))
     )),
-  'Unmute All Tabs': () => browser.tabs.query({audible: true, muted: true})
+  'Unmute All Tabs': () => browser.tabs.query({muted: true})
     .then(tabs => Promise.all(
       tabs.map(t => browser.tabs.update(t.id, {muted: false}))
     )),
@@ -12,7 +12,7 @@ const fixedCommands = {
 
 class Command {
   constructor(id, title, action, onOpen) {
-    this.id = `mute-${id}`
+    this.id = id
     this.title = title
     this.action = action
     this.onOpen = onOpen
@@ -56,29 +56,23 @@ const getMuteCommands = async filterText => {
     currentWindow: false,
     audible: true,
   })
-  const mutedTabs = await browser.tabs.query({
-    currentWindow: false,
-    muted: true,
-  })
   const commands = []
-  //remove mute/unmute from filterText
   for (const tab of audibleTabs) {
     if (!tab.mutedInfo.muted) {
       const title = `Mute ${tab.title}`
       commands.push({
         title,
         url: tab.url,
-        command: new Command(tab.id, title, muteTab(tab.id), closePopup)
+        command: new Command(`mute-${tab.id}`, title, muteTab(tab.id), closePopup)
+      })
+    } else {
+      const title = `Unmute ${tab.title}`
+      commands.push({
+        title,
+        url: tab.url,
+        command: new Command(`mute-${tab.id}`, title, unmuteTab(tab.id), closePopup)
       })
     }
-  }
-  for (const tab of mutedTabs) {
-    const title = `Unmute ${tab.title}`
-    commands.push({
-      title,
-      url: tab.url,
-      command: new Command(tab.id, title, unmuteTab(tab.id), closePopup)
-    })
   }
   if (filterText) {
     return commands.filter(cmd => filterRegex.test(cmd.title) || filterRegex.test(cmd.url)).map(cmd => cmd.command)
@@ -86,9 +80,15 @@ const getMuteCommands = async filterText => {
   return commands.map(cmd => cmd.command)
 }
 
+const getFixedCommands = filterText => {
+  return Object.entries(fixedCommands)
+    .filter(([key]) => filterText ? key.toLowerCase().includes(filterText.toLowerCase()) : true)
+    .map(([key, value], index) => new Command(`command-${index}`, key, value, closePopup))
+}
+
 const updateCommands = async filterText => {
   const muteCommands = await getMuteCommands(filterText)
-  return [...muteCommands]
+  return [...muteCommands, ...getFixedCommands(filterText)]
 }
 
 const commandList = new TabList('Commands', updateCommands)
