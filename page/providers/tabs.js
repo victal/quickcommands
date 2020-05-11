@@ -1,3 +1,4 @@
+/* global closePopup,getLimit,Tab,TabList */
 const updateTabs = (filterText) => {
   const filterRegex = new RegExp('.*' + filterText + '.*', 'i')
   return browser.tabs.query({
@@ -10,15 +11,12 @@ const updateTabs = (filterText) => {
           continue
         }
       }
-      let tabElement = new Tab(tab.id, tab.title, closePopup)
-      if (tab.audible) {
-        tabElement = new SoundTab(tab.id, tab.title, tab.mutedInfo.muted, closePopup)
-      }
-      currentTabs.push(tabElement)
+      currentTabs.push(new Tab(tab.id, tab.title, closePopup))
     }
     const limit = await getLimit()
     return currentTabs.slice(0, limit)
   })
 }
 
+/* exported tabsList */
 const tabsList = new TabList('Tabs', updateTabs)

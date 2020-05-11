@@ -1,4 +1,4 @@
-/* global Tab,SoundTab,getLimit,Link,updateTheme,TabList*/
+/* global updateTheme, tabsList, commandList, historyList, bookmarksList*/
 const closePopup = async () => {
   const url = browser.extension.getURL('page/popup.html')
   await browser.history.deleteUrl({ url: url + '#' })
@@ -157,7 +157,7 @@ const startUp = () => {
       setupInputFilter(lists)
       return updateAll(lists, null).then(() => {
         return browser.windows.getCurrent((win) => {
-          //browser.windows.onFocusChanged.addListener(removePopupOnFocusChange(win.id))
+          browser.windows.onFocusChanged.addListener(removePopupOnFocusChange(win.id))
         })
       })
     })

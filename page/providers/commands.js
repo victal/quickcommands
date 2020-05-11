@@ -1,3 +1,5 @@
+/* global closePopup,TabList */
+
 const fixedCommands = {
   //'Mute / Unmute Current Tab': () => browser.tabs.query, //TODO: save visible tab on start
   'Mute All Tabs': () => browser.tabs.query({audible: true, muted: false})
@@ -91,4 +93,5 @@ const updateCommands = async filterText => {
   return [...muteCommands, ...getFixedCommands(filterText)]
 }
 
+/* exported commandList */
 const commandList = new TabList('Commands', updateCommands)

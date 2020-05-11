@@ -1,3 +1,4 @@
+/* global closePopup,getLimit,Link,TabList */
 const updateBookmarks = (filterText) => {
   filterText = filterText || ''
   return browser.bookmarks.search({
@@ -25,4 +26,5 @@ const updateBookmarks = (filterText) => {
   })
 }
 
+/* exported bookmarksList */
 const bookmarksList = new TabList('Bookmarks', updateBookmarks)
