@@ -1,80 +1,10 @@
-/* global Tab,getLimit,Link,updateTheme,TabList*/
+/* global updateTheme, tabsList, commandList, historyList, bookmarksList*/
 const closePopup = async () => {
   const url = browser.extension.getURL('page/popup.html')
   await browser.history.deleteUrl({ url: url + '#' })
   window.close()
 }
 
-const updateTabs = (filterText) => {
-  const filterRegex = new RegExp('.*' + filterText + '.*', 'i')
-  return browser.tabs.query({
-    currentWindow: false
-  }).then(async (tabs) => {
-    const currentTabs = []
-    for (const tab of tabs) {
-      if (filterText) {
-        if (!(filterRegex.test(tab.title) || filterRegex.test(tab.url))) {
-          continue
-        }
-      }
-      const tabElement = new Tab(tab.id, tab.title, closePopup)
-      currentTabs.push(tabElement)
-    }
-    const limit = await getLimit()
-    return currentTabs.slice(0, limit)
-  })
-}
-
-const updateBookmarks = (filterText) => {
-  filterText = filterText || ''
-  return browser.bookmarks.search({
-    query: filterText
-  }).then(async (items) => {
-    const tabs = []
-    const usedUrls = []
-    const limit = await getLimit()
-    for (const item of items) {
-      if (item.type === 'bookmark' && item.title.trim().length > 0) {
-        // Limit bookmarks to http.* because of limitations on what we can open from an extension
-        const url = new URL(item.url)
-        const cleanUrl = item.url.replace(url.hash, '').replace(url.search, '')
-        const allowedUrl = !item.url.toLowerCase().startsWith('place') && !item.url.toLowerCase().startsWith('about')
-        if (allowedUrl && usedUrls.indexOf(cleanUrl) === -1) {
-          tabs.push(new Link(item.url, item.title, 'bookmark' + item.id, closePopup))
-          usedUrls.push(cleanUrl)
-        }
-      }
-      if (tabs.length === limit) {
-        return tabs
-      }
-    }
-    return tabs
-  })
-}
-
-const updateHistoryTabs = async (filterText) => {
-  filterText = filterText || ''
-  return browser.history.search({
-    text: filterText,
-    startTime: 0,
-    maxResults: await getLimit()
-  }).then((items) => {
-    const usedUrls = []
-    const historyTabs = []
-    for (const item of items) {
-      // crude atttempt at not duplicating urls
-      const allowedUrl = !item.url.toLowerCase().startsWith('place') && !item.url.toLowerCase().startsWith('about')
-      const url = new URL(item.url)
-      const cleanUrl = item.url.replace(url.hash, '')
-      if (usedUrls.indexOf(cleanUrl) === -1 && item.title.trim().length > 0 && allowedUrl) {
-        const link = new Link(cleanUrl, item.title, 'history' + items.indexOf(item))
-        historyTabs.push(link)
-        usedUrls.push(cleanUrl)
-      }
-    }
-    return historyTabs
-  })
-}
 
 const setupInputFilter = (lists) => {
   const searchInput = document.getElementById('search')
@@ -209,17 +139,9 @@ const selectPrevious = (lists) => {
   }
 }
 
-const updateAll = (lists, filterText) => {
-  let result = Promise.resolve()
-  lists.forEach((l) => {
-    result = result.then(() => {
-      return l.update(filterText)
-    })
-  })
-  return result.then(() => {
-    return reRender(lists)
-  })
-}
+const updateAll = (lists, filterText) =>
+  Promise.all(lists.map(l => l.update(filterText)))
+    .then(() => reRender(lists))
 
 const startUp = () => {
   const url = browser.extension.getURL('page/popup.html')
@@ -227,9 +149,10 @@ const startUp = () => {
     return browser.history.deleteUrl({ url }).then(() => {
       console.debug('Extension page removed from history')
       const lists = [
-        new TabList('Tabs', updateTabs),
-        new TabList('History', updateHistoryTabs),
-        new TabList('Bookmarks', updateBookmarks)
+        tabsList,
+        commandList,
+        historyList,
+        bookmarksList,
       ]
       setupInputFilter(lists)
       return updateAll(lists, null).then(() => {

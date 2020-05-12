@@ -1,13 +1,11 @@
-/* exported TabList,Tab,Link */
-const getFirstWindow = () => {
-  return browser.windows.getAll().then((windows) => {
-    return browser.windows.get(Math.min.apply(Math, windows.filter((w) => {
-      return w.type === 'normal'
-    }).map((w) => {
-      return w.id
-    })))
-  })
-}
+/* exported TabList,Tab,Link,SoundTab */
+const getFirstWindow = () => browser.windows.getAll().then(
+  windows => browser.windows.get(
+    Math.min.apply(Math,
+      windows.filter(w => w.type === 'normal').map(w => w.id)
+    )
+  )
+)
 
 class TabList {
   constructor (title, search) {
@@ -90,13 +88,16 @@ class Tab {
     this.onOpen = onOpen
   }
 
-  render () {
+  render() {
     const tabElement = document.createElement('li')
     tabElement.setAttribute('id', this.tabID)
     tabElement.addEventListener('click', () => {
       this.open()
     })
-    tabElement.textContent = this.title
+    const title = document.createElement('span')
+    title.textContent = this.title
+    title.classList.add('pull-left')
+    tabElement.appendChild(title)
     return tabElement
   }
 
@@ -118,6 +119,30 @@ class Tab {
     }).then(this.onOpen)
   }
 }
+
+class SoundTab extends Tab {
+  constructor(tabID, title, muted, onOpen) {
+    super(tabID, title, onOpen)
+  }
+  render() {
+    const tabElement = document.createElement('li')
+    tabElement.setAttribute('id', this.tabID)
+    tabElement.addEventListener('click', () => {
+      this.open()
+    })
+    const icon = document.createElement('span')
+    icon.textContent = '🔊'
+    icon.classList.add('pull-left')
+    icon.classList.add('icon')
+    const title = document.createElement('span')
+    title.textContent = this.title
+    title.classList.add('pull-left')
+    tabElement.appendChild(icon)
+    tabElement.appendChild(title)
+    return tabElement
+  }
+}
+
 
 class Link {
   constructor (url, title, id, onOpen) {
