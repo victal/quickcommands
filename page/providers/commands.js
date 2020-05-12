@@ -39,7 +39,6 @@ class Command {
     const title = document.createElement('span')
     title.textContent = this.title
     title.classList.add('pull-left')
-    title.classList.add('tab-content')
     tabElement.appendChild(title)
     return tabElement
   }

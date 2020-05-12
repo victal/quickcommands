@@ -97,7 +97,6 @@ class Tab {
     const title = document.createElement('span')
     title.textContent = this.title
     title.classList.add('pull-left')
-    title.classList.add('tab-content')
     tabElement.appendChild(title)
     return tabElement
   }
@@ -138,7 +137,6 @@ class SoundTab extends Tab {
     const title = document.createElement('span')
     title.textContent = this.title
     title.classList.add('pull-left')
-    title.classList.add('tab-content')
     tabElement.appendChild(icon)
     tabElement.appendChild(title)
     return tabElement
