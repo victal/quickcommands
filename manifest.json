@@ -7,7 +7,7 @@
     "48": "icons/icon.svg",
     "96": "icons/icon.svg"
   },
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
       "id": "{e6ad355f-be44-4c03-9d49-a39f84ac702a}",
       "strict_min_version": "60.0"
