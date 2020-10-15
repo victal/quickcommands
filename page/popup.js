@@ -1,4 +1,4 @@
-/* global updateTheme, tabsList, commandList, historyList, bookmarksList*/
+/* global updateTheme, tabsList, commandList, historyList, bookmarksList, searchList*/
 const closePopup = async () => {
   const url = browser.extension.getURL('page/popup.html')
   await browser.history.deleteUrl({ url: url + '#' })
@@ -67,18 +67,20 @@ const reRender = (lists) => {
   const currentItems = document.createDocumentFragment()
   for (const tabList of lists) {
     if (tabList.length > 0) {
-      const tabSeparator = document.createElement('li')
-      tabSeparator.classList.add('separator')
-      const separatorName = document.createElement('span')
-      separatorName.textContent = tabList.title
-      separatorName.classList.add('pull-left')
-      const count = document.createElement('span')
-      count.textContent = tabList.length
-      count.classList.add('count')
-      count.classList.add('pull-right')
-      tabSeparator.appendChild(separatorName)
-      tabSeparator.appendChild(count)
-      currentItems.appendChild(tabSeparator)
+      if (tabList.title) {
+        const tabSeparator = document.createElement('li')
+        tabSeparator.classList.add('separator')
+        const separatorName = document.createElement('span')
+        separatorName.textContent = tabList.title
+        separatorName.classList.add('pull-left')
+        const count = document.createElement('span')
+        count.textContent = tabList.length
+        count.classList.add('count')
+        count.classList.add('pull-right')
+        tabSeparator.appendChild(separatorName)
+        tabSeparator.appendChild(count)
+        currentItems.appendChild(tabSeparator)
+      }
       for (const tab of tabList.tabs) {
         currentItems.appendChild(tab.render())
       }
@@ -149,6 +151,7 @@ const startUp = () => {
     return browser.history.deleteUrl({ url }).then(() => {
       console.debug('Extension page removed from history')
       const lists = [
+        searchList,
         tabsList,
         commandList,
         historyList,

@@ -1,4 +1,4 @@
-/* exported TabList,Tab,Link,SoundTab */
+/* exported TabList,Tab,Link,SoundTab,Search */
 const getFirstWindow = () => browser.windows.getAll().then(
   windows => browser.windows.get(
     Math.min.apply(Math,
@@ -112,13 +112,54 @@ class Tab {
     document.getElementById(this.tabID).classList.remove('selected')
     this.selected = false
   }
-
   open () {
     return browser.tabs.update(this.tabID, {
       active: true
     }).then(this.onOpen)
   }
 }
+
+class Search extends Tab {
+  constructor(searchEngine, query, onOpen){
+    super(
+      `search-tab-${searchEngine.name}`,
+      `Search "${query}" on ${searchEngine.name}`,
+      onOpen
+    )
+    this.query = query
+    this.searchEngine = searchEngine
+  }
+
+  render() {
+    const tabElement = document.createElement('li')
+    tabElement.setAttribute('id', this.tabID)
+    tabElement.addEventListener('click', () => {
+      this.open()
+    })
+    const icon = document.createElement('img')
+    icon.src = this.searchEngine.favIconUrl
+    icon.classList.add('pull-left')
+    icon.classList.add('icon')
+    const title = document.createElement('span')
+    title.textContent = this.title
+    title.classList.add('pull-left')
+    tabElement.appendChild(icon)
+    tabElement.appendChild(title)
+    return tabElement
+  }
+
+  open () {
+    return getFirstWindow()
+      .then((w) => browser.tabs.create({ windowId: w.id }))
+      .then(tab => browser.search.search({
+        query: this.query,
+        engine: this.searchEngine.name,
+        tabId: tab.id
+      }))
+      .then(this.onOpen)
+  }
+}
+
 
 class SoundTab extends Tab {
   constructor(tabID, title, muted, onOpen) {
