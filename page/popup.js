@@ -169,10 +169,10 @@ const startUp = () => {
 document.addEventListener('DOMContentLoaded', startUp)
 
 const removePopupOnFocusChange = currentId => focusedId => {
-  // if (currentId !== focusedId) {
-    // browser.windows.onFocusChanged.removeListener(removePopupOnFocusChange)
-    // browser.windows.remove(currentId)
-  // }
+  if (currentId !== focusedId) {
+    browser.windows.onFocusChanged.removeListener(removePopupOnFocusChange)
+    browser.windows.remove(currentId)
+  }
 }
 
 // Save window size when closed
