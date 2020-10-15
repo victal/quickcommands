@@ -24,6 +24,7 @@ The following permissions are requested upon installation (most are quite self-e
 - history: To be able to search and display links from history
 - bookmarks: To be able to search and display links from your bookmarks
 - storage (from 1.0.0 onwards): To save your theme preferences (and sync them between devices if you are logged into your Firefox Account)
+- search (from 1.5.0 onwards): To be able to trigger a search using the default Search engine configured in Firefox
 
 ## Ideas/Suggestions/Bugs
 
