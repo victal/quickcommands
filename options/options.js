@@ -1,6 +1,5 @@
 /* global getLimit */
 
-const commandName = 'quick-commands'
 const themes = {
   default: {
     'main-bg-color': '#ececec',
@@ -21,10 +20,6 @@ const themes = {
 }
 
 let selectedTheme = themes.default
-
-const commandUpdateSupported = () => {
-  return Object.prototype.hasOwnProperty.call(browser.commands, 'update')
-}
 
 const getTheme = (themeName) => {
   if (themeName === 'custom') {
@@ -47,9 +42,6 @@ const save = (event) => {
     themeName,
     limit: getLimitValue()
   })
-  if (commandUpdateSupported()) {
-    updateShortcut()
-  }
   return false
 }
 
@@ -95,54 +87,12 @@ const restoreOptions = async () => {
   }
   doUpdatePreview(theme)
   await updateLimitUI()
-
-  if (commandUpdateSupported()) {
-    await updateShortcutUI()
-  }
 }
 
 const updatePreviewProperty = (event) => {
   const input = event.target
   const preview = document.getElementById('preview')
   preview.style.setProperty('--' + input.getAttribute('id'), input.value)
-}
-
-const updateShortcut = () => {
-  const activator = document.querySelector('#shortcut').value
-  const modifiers = Array.from(document.querySelectorAll('#shortcutBlock input[name=\'modifier\'], #shortcutBlock input[name=\'shift\']'))
-    .filter(f => f.checked)
-    .map(f => f.value)
-  modifiers.push(activator)
-  const shortcut = modifiers.join('+')
-
-  browser.commands.update({
-    name: commandName,
-    shortcut
-  })
-}
-
-const updateShortcutUI = async () => {
-  document.getElementById('shortcutBlock').style.display = 'block'
-  const commands = await browser.commands.getAll()
-  for (const command of commands) {
-    if (command.name === commandName) {
-      populateShortcutSettings(command.shortcut)
-    }
-  }
-}
-
-const populateShortcutSettings = (shortcut) => {
-  const keys = shortcut.split('+')
-  const activator = keys.pop()
-  keys.forEach(modifier => {
-    document.querySelector(`#shortcutBlock input[value='${modifier}']`).setAttribute('checked', true)
-  })
-  document.querySelector('#shortcut').value = activator
-}
-
-const resetShortcut = () => {
-  browser.commands.reset(commandName)
-  updateShortcutUI()
 }
 
 const getLimitValue = () => {
@@ -157,7 +107,6 @@ const start = () => {
   document.getElementById('form').addEventListener('submit', save)
   document.getElementById('theme').addEventListener('change', toggleCustomColors)
   document.getElementById('theme').addEventListener('change', updateLivePreview)
-  document.getElementById('reset_shortcut').addEventListener('click', resetShortcut)
   for (const input of document.querySelectorAll('input[type=color]')) {
     input.addEventListener('change', updatePreviewProperty)
   }
