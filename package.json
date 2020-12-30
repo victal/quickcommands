@@ -1,6 +1,6 @@
 {
   "name": "quickcommands",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A Firefox webextension that tries to mimic Vivaldi's Quick commands window. Open with Alt-Shift-R",
   "main": "",
   "scripts": {
