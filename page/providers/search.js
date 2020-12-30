@@ -16,4 +16,4 @@ const updateSearch = async (filterText) => {
 }
 
 /* exported searchList */
-const searchList = new TabList('', updateSearch)
+const searchList = new TabList('', updateSearch, false)

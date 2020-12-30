@@ -8,11 +8,12 @@ const getFirstWindow = () => browser.windows.getAll().then(
 )
 
 class TabList {
-  constructor (title, search) {
+  constructor (title, search, shouldFocus = true) {
     this.title = title
     this.search = search
     this.tabs = []
     this.selected = null
+    this.shouldFocus = shouldFocus
   }
 
   update (filterText) {

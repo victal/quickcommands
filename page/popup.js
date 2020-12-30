@@ -89,6 +89,13 @@ const reRender = (lists) => {
   entryList.appendChild(currentItems)
   if (lists.length > 0) {
     for (const tabList of lists) {
+      if (tabList.length > 0 && tabList.shouldFocus) {
+        if (tabList.selectFirst()) {
+          return
+        }
+      }
+    }
+    for (const tabList of lists) {
       if (tabList.length > 0) {
         tabList.selectFirst()
         return
