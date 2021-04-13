@@ -103,7 +103,7 @@ const updateLimitUI = async () => {
   document.querySelector('input[name=\'limit\']').value = await getLimit()
 }
 
-const saveLogFile  = (logName, log) => {
+const saveLogFile = (logName, log) => {
   const url = URL.createObjectURL(new Blob(log, {type: 'text/plain'}))
   // const url = URL.createObjectURL(new Blob([JSON.stringify(log)], {type: 'text/plain'}))
   browser.downloads.download({ url, filename: logName })
@@ -116,14 +116,14 @@ const start = () => {
   for (const input of document.querySelectorAll('input[type=color]')) {
     input.addEventListener('change', updatePreviewProperty)
   }
-  document.getElementById("options_export_debug").addEventListener('click', function(event) {
+  document.getElementById('options_export_debug').addEventListener('click', function(event) {
     if (event.which === 1) {
       chrome.storage.local.get(null, function(storage) {
-        saveLogFile("quickcommands.log", storage.log)
+        saveLogFile('quickcommands.log', storage.log)
       })
     }
   })
-  
+
   restoreOptions()
 }
 document.addEventListener('DOMContentLoaded', start)
