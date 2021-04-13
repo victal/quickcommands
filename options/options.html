@@ -17,10 +17,6 @@
     </div>
     <form id="form">
       <div class="half pull-left">
-        <div id="limitBlock" class="optionBlock">
-          <label for="lists">Number of results:</label>
-          <label><input type="number" name="limit" value="100" min="1"> per group</label>
-        </div>
         <div id="themeBlock" class="optionBlock">
           <label for="theme">Theme:</label>
           <select name="theme" id="theme">
@@ -56,9 +52,6 @@
             </div>
           </div>
         </div>
-        <div id="submit" class="pull-left">
-          <input type="submit" name="save" id="save" value="Save" />
-        </div>
       </div>
       <div id="previewContainer" class="half pull-right">
         <h3>Preview</h3>
@@ -82,6 +75,20 @@
               </li>
             </ul>
           </div>
+        </div>
+      </div>
+      <div>
+        <div id="limitBlock" class="optionBlock">
+          <label for="lists">Number of results:</label>
+          <label><input type="number" name="limit" value="100" min="1"> per group</label>
+        </div>
+        <div id="debugBlock" class="optionBlock">
+          <label for="debug">Enable debug logs</label>
+          <input type="checkbox" name="debug" id="debug">
+          <button class="set_button" type="button" id="options_export_debug" style="position: relative; margin:10px;">Export logs</button>
+        </div>
+        <div id="submit" class="pull-left">
+          <input type="submit" name="save" id="save" value="Save" />
         </div>
       </div>
     </form>

@@ -1,3 +1,23 @@
+const globalVars = {
+  logs: [],
+  shouldSaveLogs: false
+}
+
+const addDebugLog = log => {
+  console.debug(log)
+  const isDebugLog = true
+  if (isDebugLog) {
+    globalVars.logs.push(`[DEBUG] ${Date.now()} ${log}\n`)
+    globalVars.shouldSaveLogs = true
+  }
+}
+
+const addLog = log => {
+  console.log(log)
+  globalVars.logs.push(`[INFO] ${Date.now()} ${log}\n`)
+  globalVars.shouldSaveLogs = true
+}
+
 const getPopupData = async () => {
   const data = await browser.storage.local.get('popup')
   return Object.assign({}, data.popup)
@@ -21,14 +41,38 @@ const openPopup = async () => {
   // Window focus change listener is added in the page Javascript to ensure the listener does not trigger until the page is fully loaded
 }
 
-const updatePopupData = (request) => browser.storage.local.set({
+const updatePopupData = request => browser.storage.local.set({
   popup: {
     width: request.popupWindow.width,
     height: request.popupWindow.height
   }
 })
-browser.runtime.onMessage.addListener(updatePopupData)
 
+const messageCommands = {
+  updatePopupData,
+  addLog,
+  addDebugLog,
+}
 
-browser.commands.onCommand.addListener(openPopup)
-browser.browserAction.onClicked.addListener(openPopup)
+const messageListener = ({command, data}) => {
+  const messageCommand = messageCommands[command]
+  if (!messageCommand) {
+    return addLog(`Message listener not found for command: ${command}`)
+  }
+  return messageCommand(data)
+}
+
+const autoSaveLogs = async () => {
+  setInterval(() => {
+    if (globalVars.shouldSaveLogs) {
+      chrome.storage.local.set({ log: globalVars.logs })
+      globalVars.shouldSaveLogs = false
+    }
+  }, 1000)
+}
+document.addEventListener('DOMContentLoaded', function() {
+  autoSaveLogs()
+  browser.runtime.onMessage.addListener(messageListener)
+  browser.commands.onCommand.addListener(openPopup)
+  browser.browserAction.onClicked.addListener(openPopup)
+})

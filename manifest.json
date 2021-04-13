@@ -24,7 +24,7 @@
     },
     "default_title": "Quick Commands"
   },
-  "permissions": ["bookmarks", "storage", "tabs", "history", "search"],
+  "permissions": ["bookmarks", "storage", "tabs", "history", "search","downloads"],
   "options_ui": {
     "page": "options/options.html",
     "browser_style": true

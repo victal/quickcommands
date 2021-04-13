@@ -5,6 +5,15 @@ const closePopup = async () => {
   window.close()
 }
 
+const addLog = log => browser.runtime.sendMessage({
+  command: 'addLog',
+  data: log
+})
+
+const addDebugLog = log => browser.runtime.sendMessage({
+  command: 'addDebugLog',
+  data: log
+})
 
 const setupInputFilter = (lists) => {
   const searchInput = document.getElementById('search')
@@ -156,7 +165,7 @@ const startUp = () => {
   const url = browser.extension.getURL('page/popup.html')
   updateTheme().then(() => {
     return browser.history.deleteUrl({ url }).then(() => {
-      console.debug('Extension page removed from history')
+      addDebugLog('Extension page removed from history')
       const lists = [
         searchList,
         tabsList,
@@ -173,6 +182,7 @@ const startUp = () => {
     })
   })
 }
+
 document.addEventListener('DOMContentLoaded', startUp)
 
 const removePopupOnFocusChange = currentId => focusedId => {
@@ -185,11 +195,14 @@ const removePopupOnFocusChange = currentId => focusedId => {
 // Save window size when closed
 // Uses runtime.sendMessage to avoid race conditions with async
 // functions that deal with browser.storage
-window.addEventListener('beforeunload', () => {
+window.addEventListener('beforeunload', () =>
   browser.runtime.sendMessage({
-    popupWindow: {
-      height: window.outerHeight,
-      width: window.outerWidth
+    command: 'updatePopupData',
+    data: {
+      popupWindow: {
+        height: window.outerHeight,
+        width: window.outerWidth
+      }
     }
-  }).then(message => console.info(message.response), error => console.error(error))
-})
+  }).then(message => addLog(message.response), error => addLog(error))
+)
