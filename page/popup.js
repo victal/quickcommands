@@ -1,19 +1,10 @@
-/* global updateTheme, tabsList, commandList, historyList, bookmarksList, searchList*/
+/* global updateTheme, tabsList, commandList, historyList, bookmarksList, searchList, qcLogger */
 const closePopup = async () => {
   const url = browser.extension.getURL('page/popup.html')
   await browser.history.deleteUrl({ url: url + '#' })
   window.close()
 }
 
-const addLog = log => browser.runtime.sendMessage({
-  command: 'addLog',
-  data: log
-})
-
-const addDebugLog = log => browser.runtime.sendMessage({
-  command: 'addDebugLog',
-  data: log
-})
 
 const setupInputFilter = (lists) => {
   const searchInput = document.getElementById('search')
@@ -61,9 +52,11 @@ const setupInputFilter = (lists) => {
   searchInput.focus()
   searchInput.addEventListener('blur', () => {
     setTimeout(() => {
+      qcLogger.debug('Focus automatically reset to search input')
       searchInput.focus()
     }, 10)
   })
+  qcLogger.debug('Input filter setup finished')
 }
 
 
@@ -96,24 +89,23 @@ const reRender = (lists) => {
     }
   }
   entryList.appendChild(currentItems)
-  if (lists.length > 0) {
-    for (const tabList of lists) {
-      if (tabList.length > 0 && tabList.shouldFocus) {
-        if (tabList.selectFirst()) {
-          return
-        }
-      }
-    }
-    for (const tabList of lists) {
-      if (tabList.length > 0) {
-        tabList.selectFirst()
+  for (const tabList of lists) {
+    if (tabList.length > 0 && tabList.shouldFocus) {
+      if (tabList.selectFirst()) {
         return
       }
+    }
+  }
+  for (const tabList of lists) {
+    if (tabList.length > 0) {
+      tabList.selectFirst()
+      return
     }
   }
 }
 
 const openSelectedTab = (lists) => {
+  qcLogger.debug('Opening selected tab')
   for (const tabList of lists) {
     if (tabList.hasSelected()) {
       tabList.selected.open()
@@ -161,25 +153,22 @@ const updateAll = (lists, filterText) =>
   Promise.all(lists.map(l => l.update(filterText)))
     .then(() => reRender(lists))
 
-const startUp = () => {
+const startUp = async () => {
   const url = browser.extension.getURL('page/popup.html')
-  updateTheme().then(() => {
-    return browser.history.deleteUrl({ url }).then(() => {
-      addDebugLog('Extension page removed from history')
-      const lists = [
-        searchList,
-        tabsList,
-        commandList,
-        historyList,
-        bookmarksList,
-      ]
-      setupInputFilter(lists)
-      return updateAll(lists, null).then(() => {
-        return browser.windows.getCurrent((win) => {
-          browser.windows.onFocusChanged.addListener(removePopupOnFocusChange(win.id))
-        })
-      })
-    })
+  await updateTheme()
+  await browser.history.deleteUrl({ url })
+  qcLogger.debug('Extension page removed from history')
+  const lists = [
+    searchList,
+    tabsList,
+    commandList,
+    historyList,
+    bookmarksList,
+  ]
+  setupInputFilter(lists)
+  await updateAll(lists, null)
+  await browser.windows.getCurrent((win) => {
+    browser.windows.onFocusChanged.addListener(removePopupOnFocusChange(win.id))
   })
 }
 
@@ -204,5 +193,5 @@ window.addEventListener('beforeunload', () =>
         width: window.outerWidth
       }
     }
-  }).then(message => addLog(message.response), error => addLog(error))
+  })
 )

@@ -1,3 +1,4 @@
+/* global qcLogger */
 /* exported TabList,Tab,Link,SoundTab,Search */
 const getFirstWindow = () => browser.windows.getAll().then(
   windows => browser.windows.get(
@@ -107,16 +108,18 @@ class Tab {
     element.classList.add('selected')
     element.scrollIntoView(false)
     this.selected = true
+    qcLogger.debug(`Tab ID ${this.tabID} selected`)
   }
 
   unselect () {
     document.getElementById(this.tabID).classList.remove('selected')
     this.selected = false
+    qcLogger.debug(`Tab ID ${this.tabID} unselected`)
   }
   open () {
-    return browser.tabs.update(this.tabID, {
-      active: true
-    }).then(this.onOpen)
+    return browser.tabs.update(this.tabID, { active: true })
+      .then(() => qcLogger.debug(`Tab ID ${this.tabID} opened`))
+      .then(this.onOpen)
   }
 }
 
@@ -157,6 +160,7 @@ class Search extends Tab {
         engine: this.searchEngine.name,
         tabId: tab.id
       }))
+      .then(() => qcLogger.debug(`Search ID ${this.tabID} opened`))
       .then(this.onOpen)
   }
 }
@@ -220,11 +224,13 @@ class Link {
     element.classList.add('selected')
     element.scrollIntoView(false)
     this.selected = true
+    qcLogger.debug(`Link ID ${this.id} unselected`)
   }
 
   unselect () {
     document.getElementById(this.id).classList.remove('selected')
     this.selected = false
+    qcLogger.debug(`Link ID ${this.id} unselected`)
   }
 
   open () {
@@ -232,6 +238,7 @@ class Link {
       browser.tabs.create({ url: this.url, windowId: w.id })
         .then(() => browser.windows.update(w.id, { focused: true }))
         .then(this.onOpen)
+        .then(() => qcLogger.debug(`Link ID ${this.id} opened`))
     )
   }
 }
