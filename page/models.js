@@ -116,7 +116,9 @@ class Tab {
   open () {
     return browser.tabs.update(this.tabID, {
       active: true
-    }).then(this.onOpen)
+    })
+      .then(({windowId}) => browser.windows.update(windowId, {focused: true}))
+      .then(this.onOpen)
   }
 }
 
