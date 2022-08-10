@@ -1,4 +1,7 @@
 /* global closePopup,getLimit,Link,TabList */
+
+const hasTitle = item => item.title && item.title.trim().length > 0
+
 const updateHistoryTabs = async (filterText) => {
   filterText = filterText || ''
   return browser.history.search({
@@ -13,7 +16,7 @@ const updateHistoryTabs = async (filterText) => {
       const allowedUrl = !item.url.toLowerCase().startsWith('place') && !item.url.toLowerCase().startsWith('about')
       const url = new URL(item.url)
       const cleanUrl = item.url.replace(url.hash, '')
-      if (usedUrls.indexOf(cleanUrl) === -1 && item.title.trim().length > 0 && allowedUrl) {
+      if (usedUrls.indexOf(cleanUrl) === -1 && hasTitle(item) && allowedUrl) {
         const link = new Link(cleanUrl, item.title, 'history' + items.indexOf(item), closePopup)
         historyTabs.push(link)
         usedUrls.push(cleanUrl)
