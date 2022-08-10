@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Quick Commands",
-  "version": "1.5.2",
+  "version": "1.5.1",
   "description": "An add-on that tries to mimic Vivaldi's Quick commands window. Open with Alt-Shift-R",
   "icons": {
     "48": "icons/icon.svg",
