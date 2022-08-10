@@ -4,7 +4,7 @@ const getPopupData = async () => {
 }
 
 const openPopup = async () => {
-  const url = browser.extension.getURL('page/popup.html')
+  const url = browser.runtime.getURL('page/popup.html')
   // Prevent the popup from opening multiple times
   const tabs = await browser.tabs.query({url})
   if (tabs.length > 0) {

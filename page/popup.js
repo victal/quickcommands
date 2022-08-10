@@ -1,6 +1,6 @@
 /* global updateTheme, tabsList, commandList, historyList, bookmarksList, searchList*/
 const closePopup = async () => {
-  const url = browser.extension.getURL('page/popup.html')
+  const url = browser.runtime.getURL('page/popup.html')
   await browser.history.deleteUrl({ url: url + '#' })
   window.close()
 }
@@ -153,7 +153,7 @@ const updateAll = (lists, filterText) =>
     .then(() => reRender(lists))
 
 const startUp = () => {
-  const url = browser.extension.getURL('page/popup.html')
+  const url = browser.runtime.getURL('page/popup.html')
   updateTheme().then(() => {
     return browser.history.deleteUrl({ url }).then(() => {
       console.debug('Extension page removed from history')
