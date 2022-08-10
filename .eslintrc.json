@@ -42,5 +42,13 @@
         "quotes": ["error", "single"],
         "semi": ["error", "never"],
         "space-infix-ops": ["error"]
-    }
+    },
+    "overrides": [
+        {
+            "files": ["./web-ext-config.js"],
+            "env": {
+                "node": true
+            }
+        }
+    ]
 }
