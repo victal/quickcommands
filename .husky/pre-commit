@@ -1,0 +1,15 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+MODIFIED_FILES=$(git diff --name-only --staged | wc -l)
+if [ "${MODIFIED_FILES}" -eq 0 ]; then
+    echo 'No files have been staged for commit, aborting commit without running hooks'
+    exit 0
+fi
+
+# run the global hook if it is present
+if [ -e "$(git config --global core.hookspath)/pre-commit" ]; then
+    "$(git config --global core.hookspath)/pre-commit" "$@"
+fi
+
+npm run lint

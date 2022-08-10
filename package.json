@@ -5,7 +5,7 @@
   "main": "",
   "scripts": {
     "build": "web-ext build",
-    "dev": "web-ext run -f ${FIREFOX:-firefox}",
+    "dev": "web-ext run",
     "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,19 +20,14 @@
   },
   "homepage": "https://github.com/victal/quickcommands#readme",
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-node": "^10.0.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
-    "eslint-watch": "^6.0.1",
-    "husky": "^4.3.0",
-    "web-ext": "^5.3.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
+    "eslint": "^8.21.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-standard": "^5.0.0",
+    "eslint-watch": "^8.0.0",
+    "husky": "^8.0.1",
+    "web-ext": "^7.1.1"
   }
 }
