@@ -3,14 +3,23 @@ const getPopupData = async () => {
   return Object.assign({}, data.popup)
 }
 
+function onVisited(historyItem) {
+  if (historyItem.url == browser.runtime.getURL('page/popup.html')) {
+    // return browser.history.deleteUrl({url: historyItem.url})
+  }
+}
+
 const openPopup = async () => {
-  const url = browser.extension.getURL('page/popup.html')
+  const url = browser.runtime.getURL('page/popup.html')
   // Prevent the popup from opening multiple times
   const tabs = await browser.tabs.query({url})
   if (tabs.length > 0) {
     return
   }
+  browser.history.onVisited.addListener(onVisited);
   const popupData = await getPopupData()
+  const previousWindow = await browser.windows.getLastFocused()
+  await browser.storage.local.set({ previousWindowId: previousWindow.id })
   await browser.windows.create({
     type: 'detached_panel',
     url,

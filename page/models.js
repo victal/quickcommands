@@ -1,11 +1,18 @@
 /* exported TabList,Tab,Link,SoundTab,Search */
-const getFirstWindow = () => browser.windows.getAll().then(
-  windows => browser.windows.get(
-    Math.min.apply(Math,
-      windows.filter(w => w.type === 'normal').map(w => w.id)
-    )
-  )
-)
+const getFirstWindow = () => browser.storage.local.get('previousWindowId')
+  .then(data => {
+    if (data.previousWindowId) {
+      return browser.windows.get(data.previousWindowId)
+    } else {
+      return browser.windows.getAll().then(
+        windows => browser.windows.get(
+          Math.min.apply(Math,
+            windows.filter(w => w.type === 'normal').map(w => w.id)
+          )
+        )
+      )
+    }
+  })
 
 class TabList {
   constructor (title, search, shouldFocus = true) {
